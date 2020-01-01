@@ -18,15 +18,17 @@ from django.contrib import admin
 from django.urls import include
 
 from android import views as av
+from web import views as we
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('test/',av.test_view),
-    url('login/',av.login),
     url('ppp',av.ppp),
     #^以。。。开头$以。。。结尾
     url(r'^articles/2003/$',av.article),
     url(r'^articles/(?P<year>[0-9]{4})/$',av.article_archive),
-    url("android/",include("android.urls"))
+    url("android/",include("android.urls")),
+    #web端
+    url(r'^web/login/',we.login),
 
 ]

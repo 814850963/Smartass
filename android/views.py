@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
+
 import pymysql as pymysql
-from django.shortcuts import render,HttpResponse,Http404
+from django.http import JsonResponse,HttpResponse
+from django.shortcuts import render,Http404
 
 # Create your views here.
 
@@ -17,10 +20,17 @@ def login(request):
     # """
     # return HttpResponse(html)
     #把html文件渲染
-    return render(request,'form.html')
+    da = {'data':'成功收到了'}
+    return HttpResponse(json.dumps(da,ensure_ascii=False),content_type="application/json,charset=utf-8");
 
 def ppp(request):
-    return HttpResponse(request)
+    print(request.POST.get('name'))
+    print(request.POST.get('passwd'))
+    da = {
+                "status1": 123,
+                "result": 321
+            }
+    return HttpResponse(json.dumps(da),content_type="application/x-www-form-urlencoded")
 
 def  article(request):
     return HttpResponse('article 2003')

@@ -2,9 +2,11 @@
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from __future__ import unicode_literals
+
 from django.db import models
 
 
@@ -16,8 +18,7 @@ class Admin(models.Model):
     class Meta:
         managed = False
         db_table = 'admin'
-    def __str__(self):
-        return self.name+"这里我用了str函数进行了修改"
+
 
 class Category(models.Model):
     categoryid = models.AutoField(db_column='categoryId', primary_key=True)  # Field name made lowercase.
@@ -87,9 +88,6 @@ class Class(models.Model):
     name = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     status = models.IntegerField(blank=True, null=True)
-    time = models.TimeField()
-    day = models.IntegerField()
-    place = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -154,8 +152,8 @@ class Coursestu(models.Model):
 
 class Follow(models.Model):
     followid = models.AutoField(db_column='followId', primary_key=True)  # Field name made lowercase.
-    fid = models.IntegerField(blank=True, null=True)
-    bfid = models.IntegerField(blank=True, null=True)
+    fid = models.IntegerField(db_column='fId')  # Field name made lowercase.
+    bfid = models.IntegerField(db_column='bfId')  # Field name made lowercase.
     fidentify = models.IntegerField()
     bfidentify = models.IntegerField()
     status = models.IntegerField(blank=True, null=True)
@@ -187,7 +185,6 @@ class Infostu(models.Model):
     class Meta:
         managed = False
         db_table = 'infostu'
-        db_table = 'infostu'
 
 
 class Major(models.Model):
@@ -212,6 +209,19 @@ class New(models.Model):
     class Meta:
         managed = False
         db_table = 'new'
+
+
+class Schedule(models.Model):
+    scheduleid = models.AutoField(db_column='scheduleId', primary_key=True)  # Field name made lowercase.
+    place = models.CharField(max_length=255)
+    time = models.CharField(max_length=255)
+    count = models.IntegerField()
+    status = models.IntegerField(blank=True, null=True)
+    classid = models.ForeignKey(Class, models.DO_NOTHING, db_column='classId')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'schedule'
 
 
 class Student(models.Model):
