@@ -189,8 +189,8 @@ class Infostu(models.Model):
 
 class Major(models.Model):
     majorid = models.AutoField(db_column='majorId', primary_key=True)  # Field name made lowercase.
-    name = models.CharField(max_length=255)
-    intro = models.CharField(max_length=255)
+    mname = models.CharField(max_length=255)
+    mintro = models.CharField(max_length=255)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -232,7 +232,7 @@ class Student(models.Model):
     headpic = models.CharField(max_length=255, blank=True, null=True)
     facedata = models.CharField(max_length=255, blank=True, null=True)
     majorid = models.ForeignKey(Major, models.DO_NOTHING, db_column='majorId')  # Field name made lowercase.
-    grade = models.CharField(max_length=255)
+    grade = models.IntegerField()
     email = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     status = models.IntegerField()

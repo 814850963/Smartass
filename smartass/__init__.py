@@ -1,3 +1,4 @@
+# coding:utf-8
 import pymysql
 
 #使用pymysql

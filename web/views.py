@@ -22,11 +22,13 @@ def login(request):
     result = md5.hexdigest()
     print(result)
     admin = Admin.objects.filter(name=request.POST.get('name'),passwd=result)
-    print(admin)
+    print(admin[0])
+    print(admin[0].adminid)
     if admin:
         data = {
             "status": 1,
-            "result": "登录成功"
+            "result": "登录成功",
+            "authen": admin[0].adminid
         }
     else:
         data = {
@@ -35,4 +37,4 @@ def login(request):
         }
 
     return JsonResponse(data)
-    return HttpResponse(json.dumps(da), content_type="application/json")
+    # return HttpResponse(json.dumps(da), content_type="application/json")

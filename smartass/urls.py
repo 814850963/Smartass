@@ -19,6 +19,11 @@ from django.urls import include
 
 from android import views as av
 from web import views as we
+from web.view.HandleStudent import *
+
+
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -29,6 +34,9 @@ urlpatterns = [
     url(r'^articles/(?P<year>[0-9]{4})/$',av.article_archive),
     url("android/",include("android.urls")),
     #web端
-    url(r'^web/login/',we.login),
+    url(r'^web/login/$',we.login),
+    url(r'^web/userlist/$',StudentList.as_view()),
+    url(r'^web/userlist/getAllMajor/',GetAllMajor.as_view()),
+    url(r'^web/userlist/addstudent/',AddStudent.as_view()),
 
 ]

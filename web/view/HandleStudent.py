@@ -1,0 +1,127 @@
+import json
+import os
+from base64 import encode
+
+from django.core import serializers
+from django.views import View
+
+from django.http import HttpResponse,JsonResponse
+import cv2 as cv
+from PIL import Image
+from smartass import settings, Utils
+from smartass.settings import BASE_DIR
+from web.models import *
+#转化成json（数据丢失）
+# students = json.loads(serializers.serialize("json", students))
+FACE_URL = '/static/facedata/'
+STUDENTPIC_URL = '/static/pic/'
+PENGYOUQUAN_URL = '/static/pengyouquan/'
+#获取学生列表
+class StudentList(View):
+    def get(self,request):
+        page = request.GET.get('page')
+        grade = request.GET.get('grade')
+        major = request.GET.get('major')
+        #带专业和页数查询
+        if grade != None and major != None and page !=None:
+            students = Student.objects.raw(
+                'select * from major m inner join student s  on s.majorid=' + major + ' and s.majorid = m.majorid and s.grade=' + grade)
+            length = len(students)
+            temp = []
+            for s in students:
+                temp.append(
+                    {'account': s.account, 'name': s.name, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                     'major': s.mname, 'status': s.status})
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": temp[abs(int(page) - 1) * 10:abs(int(page) - 1) * 10 + 10],
+                "page": abs(int(page)),
+                "len": length
+            }
+            return JsonResponse(data)
+        # 带专业查询
+        elif page==None and grade!=None and major!=None:
+            students = Student.objects.raw('select * from major m inner join student s  on s.majorid='+major +' and s.majorid = m.majorid and s.grade='+grade)
+            temp = []
+            length = len(students)
+            for s in students:
+                temp.append(
+                    {'account': s.account, 'name': s.name, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                     'major': s.mname, 'status': s.status})
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": temp[0:10],
+                "page": 1,
+                "len": length
+            }
+            return JsonResponse(data)
+        #直接查询
+        students = Student.objects.raw('select * from major m inner join student s  on m.majorid=s.majorid')
+        temp = []
+        for s in students:
+            temp.append({'account':s.account,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.mname,'status':s.status})
+        length = len(students)
+        data = {
+            "status": 1,
+            "result": "查询成功",
+            "data": temp[abs(int(page)-1)*10:abs(int(page)-1)*10+10],
+            "page": abs(int(page)),
+            "len": length
+        }
+        return JsonResponse(data)
+
+#获取专业信息
+class GetAllMajor(View):
+    def get(self, request):
+        majors = Major.objects.all().order_by('majorid').values()
+        data = []
+        for i in majors:
+            instdata = {
+                'value': i.get('majorid'),
+                'label': i.get('mname'),
+                'children': [{
+                    'value': '1',
+                    'label': '大一'
+                }, {
+                    'value': '2',
+                    'label': '大二'
+                }, {
+                    'value': '3',
+                    'label': '大三'
+                }, {
+                    'value': '4',
+                    'label': '大四'
+                }]}
+
+            data.append(instdata)
+        return JsonResponse(data,safe=False)
+
+#添加学生
+class AddStudent(View):
+    def post(self,request):
+        filename = request.POST.get('pic')
+        file = request.FILES.get('file')
+        # 读取
+        # image = open(file,'r+')
+        if not file:  # 文件对象不存在， 返回400请求错误
+            data = {
+                "status": 0,
+                "result": "添加失败",
+            }
+            return JsonResponse(data)
+        if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+            data = {
+                "status": 0,
+                "result": "文件格式有误",
+            }
+            return JsonResponse(data)
+        #保存文件
+        with open(settings.STATIC_ROOT+Utils.makerandomuuid(filename.split('.')[-1]), 'wb+') as f:
+            f.write(file.read())
+        data = {
+            "status": 1,
+            "result": "添加成功",
+        }
+        return JsonResponse(data)
