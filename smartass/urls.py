@@ -38,5 +38,7 @@ urlpatterns = [
     url(r'^web/userlist/$',StudentList.as_view()),
     url(r'^web/userlist/getAllMajor/',GetAllMajor.as_view()),
     url(r'^web/userlist/addstudent/',AddStudent.as_view()),
+    url(r'^web/userlist/changestudent/',ChangeStudent.as_view()),
+    url(r'^web/userlist/changestatus/',ChangeStatus.as_view()),
 
 ]

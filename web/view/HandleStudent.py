@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from base64 import encode
@@ -25,13 +26,13 @@ class StudentList(View):
         #带专业和页数查询
         if grade != None and major != None and page !=None:
             students = Student.objects.raw(
-                'select * from major m inner join student s  on s.majorid=' + major + ' and s.majorid = m.majorid and s.grade=' + grade)
+                'select s.*,m.mname from major m inner join student s  on s.majorid=' + major + ' and s.majorid = m.majorid and s.grade=' + grade)
             length = len(students)
             temp = []
             for s in students:
                 temp.append(
-                    {'account': s.account, 'name': s.name, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
-                     'major': s.mname, 'status': s.status})
+                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                     'major': s.majorid.majorid, 'status': s.status})
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -42,13 +43,13 @@ class StudentList(View):
             return JsonResponse(data)
         # 带专业查询
         elif page==None and grade!=None and major!=None:
-            students = Student.objects.raw('select * from major m inner join student s  on s.majorid='+major +' and s.majorid = m.majorid and s.grade='+grade)
+            students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on s.majorid='+major +' and s.majorid = m.majorid and s.grade='+grade)
             temp = []
             length = len(students)
             for s in students:
                 temp.append(
-                    {'account': s.account, 'name': s.name, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
-                     'major': s.mname, 'status': s.status})
+                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                     'major': s.majorid.majorid, 'status': s.status})
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -58,10 +59,11 @@ class StudentList(View):
             }
             return JsonResponse(data)
         #直接查询
-        students = Student.objects.raw('select * from major m inner join student s  on m.majorid=s.majorid')
+        students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid')
         temp = []
         for s in students:
-            temp.append({'account':s.account,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.mname,'status':s.status})
+            print(s.majorid.majorid)
+            temp.append({'sid':s.studentid,'account':s.account,'mname':s.mname,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.majorid.majorid,'status':s.status})
         length = len(students)
         data = {
             "status": 1,
@@ -96,15 +98,26 @@ class GetAllMajor(View):
                 }]}
 
             data.append(instdata)
+        instdata = {
+            'value': 0,
+            'label': '所有专业',}
+        data.append(instdata)
         return JsonResponse(data,safe=False)
 
 #添加学生
 class AddStudent(View):
     def post(self,request):
+        print(request.POST)
+        print(request.FILES)
         filename = request.POST.get('pic')
         file = request.FILES.get('file')
-        # 读取
-        # image = open(file,'r+')
+        name = request.POST.get('name')
+        password = request.POST.get('password')
+        account = request.POST.get('account')
+        major = request.POST.get('major')
+        grade = request.POST.get('grade')
+        email = request.POST.get('email')
+        #处理图片
         if not file:  # 文件对象不存在， 返回400请求错误
             data = {
                 "status": 0,
@@ -117,11 +130,89 @@ class AddStudent(View):
                 "result": "文件格式有误",
             }
             return JsonResponse(data)
+        #生成随机的名字
+        filename = Utils.makerandomuuid(filename.split('.')[-1])
+        #md5加密
+        md5 = hashlib.md5()
+        md5.update(password.encode("utf-8"))
+        result = md5.hexdigest()
+        #生成major对象
+        major = Major.objects.get(majorid=major)
+        #插入数据
+        Student.objects.create(name=name,passwd=result,account=account,majorid=major,grade=grade,headpic=filename,status=1,email=email)
         #保存文件
-        with open(settings.STATIC_ROOT+Utils.makerandomuuid(filename.split('.')[-1]), 'wb+') as f:
+        with open(settings.STATIC_ROOT+ filename, 'wb+') as f:
             f.write(file.read())
         data = {
             "status": 1,
             "result": "添加成功",
         }
         return JsonResponse(data)
+
+#修改学生信息
+class ChangeStudent(View):
+    def post(self, request):
+        filename = request.POST.get('pic')
+        file = request.FILES.get('file')
+        name = request.POST.get('name')
+        password = request.POST.get('password')
+        account = request.POST.get('account')
+        major = request.POST.get('major')
+        grade = request.POST.get('grade')
+        email = request.POST.get('email')
+        sid = request.POST.get('sid')
+        # 处理图片
+        if not file:  # 文件对象不存在， 返回400请求错误
+            data = {
+                "status": 0,
+                "result": "添加失败",
+            }
+            return JsonResponse(data)
+        if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+            data = {
+                "status": 0,
+                "result": "文件格式有误",
+            }
+            return JsonResponse(data)
+        # 生成随机的名字
+        filename = Utils.makerandomuuid(filename.split('.')[-1])
+        # md5加密
+        md5 = hashlib.md5()
+        md5.update(password.encode("utf-8"))
+        result = md5.hexdigest()
+        # 生成major对象
+        major = Major.objects.get(majorid=major)
+        #获取原来用户的图片
+        student = Student.objects.get(studentid=sid)
+        f = student.headpic
+        if f != 'null':
+            os.remove(settings.STATIC_ROOT+f)
+        # 插入数据
+        Student.objects.filter(studentid=sid).update(name=name, passwd=result, account=account, majorid=major, grade=grade, headpic=filename,email=email)
+        # 保存文件
+        with open(settings.STATIC_ROOT + filename, 'wb+') as f:
+            f.write(file.read())
+        data = {
+            "status": 1,
+            "result": "添加成功",
+        }
+        return JsonResponse(data)
+
+#修改学生状态
+class ChangeStatus(View):
+    def post(self,request):
+        print(request.POST)
+        status = request.POST.get('status')
+        sid = request.POST.get('sid')
+        if Student.objects.filter(studentid=sid).update(status=status):
+            data = {
+                "status": 1,
+                "result": "修改成功",
+            }
+            return JsonResponse(data)
+        else:
+            data = {
+                "status": 0,
+                "result": "修改失败",
+            }
+            return JsonResponse(data)

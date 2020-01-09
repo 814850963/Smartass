@@ -15,8 +15,6 @@ from web.models import *
 
 
 def login(request):
-    print(request.POST.get('name'))
-    print(request.POST.get('passwd'))
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))
     result = md5.hexdigest()
