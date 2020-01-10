@@ -20,10 +20,7 @@ from django.urls import include
 from android import views as av
 from web import views as we
 from web.view.HandleStudent import *
-
-
-
-
+from web.view.HandleTeacher import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -35,10 +32,17 @@ urlpatterns = [
     url("android/",include("android.urls")),
     #web端
     url(r'^web/login/$',we.login),
+    #学生管理
     url(r'^web/userlist/$',StudentList.as_view()),
     url(r'^web/userlist/getAllMajor/',GetAllMajor.as_view()),
     url(r'^web/userlist/addstudent/',AddStudent.as_view()),
     url(r'^web/userlist/changestudent/',ChangeStudent.as_view()),
-    url(r'^web/userlist/changestatus/',ChangeStatus.as_view()),
-
+    url(r'^web/userlist/changestatus/',ChangeSStatus.as_view()),
+    #教师管理
+    url(r'^web/teacherList/$',TeacherList.as_view()),
+    url(r'^web/teacherList/getAllMajor/',GetAllMajor.as_view()),
+    url(r'^web/teacherList/addteacher/',AddTeacher.as_view()),
+    url(r'^web/teacherList/changeteacher/', ChangeTeacher.as_view()),
+    url(r'^web/teacherList/changeTstatus/', ChangeTStatus.as_view()),
+    # url(r'^web/teacherList/searchTClass/', SearchTClass.as_view()),
 ]

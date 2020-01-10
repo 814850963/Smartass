@@ -62,7 +62,6 @@ class StudentList(View):
         students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid')
         temp = []
         for s in students:
-            print(s.majorid.majorid)
             temp.append({'sid':s.studentid,'account':s.account,'mname':s.mname,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.majorid.majorid,'status':s.status})
         length = len(students)
         data = {
@@ -77,27 +76,35 @@ class StudentList(View):
 #获取专业信息
 class GetAllMajor(View):
     def get(self, request):
-        majors = Major.objects.all().order_by('majorid').values()
-        data = []
-        for i in majors:
-            instdata = {
-                'value': i.get('majorid'),
-                'label': i.get('mname'),
-                'children': [{
-                    'value': '1',
-                    'label': '大一'
-                }, {
-                    'value': '2',
-                    'label': '大二'
-                }, {
-                    'value': '3',
-                    'label': '大三'
-                }, {
-                    'value': '4',
-                    'label': '大四'
-                }]}
-
-            data.append(instdata)
+        if(request.GET.get('flag')):
+            majors = Major.objects.all().order_by('majorid').values()
+            data = []
+            for i in majors:
+                instdata = {
+                    'value': i.get('majorid'),
+                    'label': i.get('mname')}
+                data.append(instdata)
+        else:
+            majors = Major.objects.all().order_by('majorid').values()
+            data = []
+            for i in majors:
+                instdata = {
+                    'value': i.get('majorid'),
+                    'label': i.get('mname'),
+                    'children': [{
+                        'value': '1',
+                        'label': '大一'
+                    }, {
+                        'value': '2',
+                        'label': '大二'
+                    }, {
+                        'value': '3',
+                        'label': '大三'
+                    }, {
+                        'value': '4',
+                        'label': '大四'
+                    }]}
+                data.append(instdata)
         instdata = {
             'value': 0,
             'label': '所有专业',}
@@ -107,8 +114,6 @@ class GetAllMajor(View):
 #添加学生
 class AddStudent(View):
     def post(self,request):
-        print(request.POST)
-        print(request.FILES)
         filename = request.POST.get('pic')
         file = request.FILES.get('file')
         name = request.POST.get('name')
@@ -199,9 +204,8 @@ class ChangeStudent(View):
         return JsonResponse(data)
 
 #修改学生状态
-class ChangeStatus(View):
+class ChangeSStatus(View):
     def post(self,request):
-        print(request.POST)
         status = request.POST.get('status')
         sid = request.POST.get('sid')
         if Student.objects.filter(studentid=sid).update(status=status):
