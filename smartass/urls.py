@@ -21,6 +21,8 @@ from android import views as av
 from web import views as we
 from web.view.HandleStudent import *
 from web.view.HandleTeacher import *
+from web.view.HandleCourse import *
+from web.view.HandleClass import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -45,4 +47,16 @@ urlpatterns = [
     url(r'^web/teacherList/changeteacher/', ChangeTeacher.as_view()),
     url(r'^web/teacherList/changeTstatus/', ChangeTStatus.as_view()),
     # url(r'^web/teacherList/searchTClass/', SearchTClass.as_view()),
+    #课程管理
+    url(r'^web/courseList/$',CourseList.as_view()),
+    url(r'^web/courseList/getAllMajor/', GetAllMajor.as_view()),
+    url(r'^web/courseList/addcourse/',AddCourse.as_view()),
+    url(r'^web/courseList/changecourse/', ChangeCourse.as_view()),
+    url(r'^web/courseList/changeCstatus/', ChangeCStatus.as_view()),
+    #班级管理
+    url(r'^web/classList/$', ClassList.as_view()),
+    url(r'^web/classList/getAllMajor/', GetAllMajorCourse.as_view()),
+    url(r'^web/classList/addclass/', AddClass.as_view()),
+    url(r'^web/classList/changeclass/', ChangeClass.as_view()),
+    url(r'^web/classList/changeCstatus/', ChangeClStatus.as_view()),
 ]

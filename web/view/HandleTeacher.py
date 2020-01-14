@@ -108,7 +108,6 @@ class AddTeacher(View):
 #修改老师信息
 class ChangeTeacher(View):
     def post(self, request):
-        print(request.POST)
         filename = request.POST.get('pic')
         file = request.FILES.get('file')
         name = request.POST.get('name')

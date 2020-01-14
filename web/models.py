@@ -88,6 +88,7 @@ class Class(models.Model):
     name = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     status = models.IntegerField(blank=True, null=True)
+    courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -122,21 +123,11 @@ class Course(models.Model):
     name = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     status = models.IntegerField()
+    majorid = models.ForeignKey('Major', models.DO_NOTHING, db_column='majorid', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'course'
-
-
-class Courseclass(models.Model):
-    courseclassid = models.AutoField(db_column='courseclassId', primary_key=True)  # Field name made lowercase.
-    classid = models.ForeignKey(Class, models.DO_NOTHING, db_column='classId')  # Field name made lowercase.
-    courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='courseId')  # Field name made lowercase.
-    status = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'courseclass'
 
 
 class Coursestu(models.Model):
