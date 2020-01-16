@@ -89,6 +89,10 @@ class Class(models.Model):
     intro = models.CharField(max_length=255)
     status = models.IntegerField(blank=True, null=True)
     courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseId', blank=True, null=True)  # Field name made lowercase.
+    place = models.CharField(max_length=255, blank=True, null=True)
+    time = models.CharField(max_length=255, blank=True, null=True)
+    count = models.IntegerField(blank=True, null=True)
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -200,19 +204,6 @@ class New(models.Model):
     class Meta:
         managed = False
         db_table = 'new'
-
-
-class Schedule(models.Model):
-    scheduleid = models.AutoField(db_column='scheduleId', primary_key=True)  # Field name made lowercase.
-    place = models.CharField(max_length=255)
-    time = models.CharField(max_length=255)
-    count = models.IntegerField()
-    status = models.IntegerField(blank=True, null=True)
-    classid = models.ForeignKey(Class, models.DO_NOTHING, db_column='classId')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'schedule'
 
 
 class Student(models.Model):

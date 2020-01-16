@@ -26,7 +26,8 @@ SECRET_KEY = '@mh9bzdn$^sv@6tu8^!_-$q=g&vpe^6we-$*#_(6b4pm)6-t$5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cd.dryht.cn',
+                 'localhost']
 
 
 # Application definition

@@ -40,6 +40,8 @@ urlpatterns = [
     url(r'^web/userlist/addstudent/',AddStudent.as_view()),
     url(r'^web/userlist/changestudent/',ChangeStudent.as_view()),
     url(r'^web/userlist/changestatus/',ChangeSStatus.as_view()),
+    url(r'^web/userclasslist/$',GetClassStudent.as_view()),
+
     #教师管理
     url(r'^web/teacherList/$',TeacherList.as_view()),
     url(r'^web/teacherList/getAllMajor/',GetAllMajor.as_view()),
@@ -56,6 +58,7 @@ urlpatterns = [
     #班级管理
     url(r'^web/classList/$', ClassList.as_view()),
     url(r'^web/classList/getAllMajor/', GetAllMajorCourse.as_view()),
+    url(r'^web/classList/getAllTeacher/', GetAllTeacher.as_view()),
     url(r'^web/classList/addclass/', AddClass.as_view()),
     url(r'^web/classList/changeclass/', ChangeClass.as_view()),
     url(r'^web/classList/changeCstatus/', ChangeClStatus.as_view()),

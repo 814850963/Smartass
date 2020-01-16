@@ -220,3 +220,55 @@ class ChangeSStatus(View):
                 "result": "修改失败",
             }
             return JsonResponse(data)
+#获取上课的学生
+class GetClassStudent(View):
+    def get(self,request):
+        page = request.GET.get('page')
+        classid = request.GET.get('classid')
+        if page!=None:
+            #通过classid查询学生
+            classtus = Classstu.objects.filter(classid=classid)
+            students = []
+            for s in classtus:
+                students.append(s.studentid)
+            studentlist = []
+            for s in students:
+                student = Student.objects.raw(
+                    'select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid and s.studentid = '+str(s.studentid))
+                studentlist.append({'sid': student[0].studentid, 'account': student[0].account, 'mname': student[0].mname, 'name': student[0].name,
+                             'headpic': "http://" + request.get_host() + Utils.PIC_URL + student[0].headpic, 'grade': student[0].grade,
+                             'email': student[0].email, 'major': student[0].majorid.majorid, 'status': student[0].status})
+            length = len(students)
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": studentlist[abs(int(page) - 1) * 10:abs(int(page) - 1) * 10 + 10],
+                "page": abs(int(page)),
+                "len": length
+            }
+            return JsonResponse(data)
+        else:
+            # 通过classid查询学生
+            classtus = Classstu.objects.filter(classid=classid)
+            students = []
+            for s in classtus:
+                print(s)
+                students.append(s.studentid)
+            studentlist = []
+            for s in students:
+                student = Student.objects.raw(
+                    'select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid and studentid = ' + s)
+                studentlist.append(
+                    {'sid': student.studentid, 'account': student.account, 'mname': student.mname, 'name': student.name,
+                     'headpic': "http://" + request.get_host() + Utils.PIC_URL + student.headpic,
+                     'grade': student.grade,
+                     'email': student.email, 'major': student.majorid.majorid, 'status': student.status})
+            length = len(students)
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": studentlist[0:10],
+                "page": abs(int(page)),
+                "len": length
+            }
+            return JsonResponse(data)

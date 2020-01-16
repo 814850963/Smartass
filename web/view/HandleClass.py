@@ -24,9 +24,17 @@ class ClassList(View):
             classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major+' inner join class cc on cc.courseid = '+course+' and c.courseid = '+course)
             length = len(classes)
             temp = []
+            count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,'major': c.majorid,'status': c.status, 'course': c.courseid.courseid})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid})
+                c = Class.objects.raw('select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= '+str(c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                print(temp[count])
+                count+=1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -41,10 +49,18 @@ class ClassList(View):
                 'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = ' + course + ' and c.courseid = ' + course)
             length = len(classes)
             temp = []
+            count = 0
             for c in classes:
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid,'status': c.status, 'course': c.courseid.courseid})
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                c = Class.objects.raw(
+                    'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
+                        c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                count += 1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -59,10 +75,18 @@ class ClassList(View):
                 'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
             length = len(classes)
             temp = []
+            count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname,'coursename':c.cname, 'info': c.intro, 'major': c.majorid,
-                     'status': c.status, 'course': c.courseid.courseid})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                c = Class.objects.raw(
+                    'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
+                        c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                count += 1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -77,11 +101,18 @@ class ClassList(View):
                 'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
             length = len(classes)
             temp = []
+            count = 0
             for c in classes:
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid,
-                     'status': c.status, 'course': c.courseid.courseid})
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                c = Class.objects.raw(
+                    'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
+                        c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                count += 1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -96,11 +127,18 @@ class ClassList(View):
                 'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid= c.majorid inner join class cc on cc.courseid = c.courseid')
             length = len(classes)
             temp = []
+            count = 0
             for c in classes:
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid,
-                     'status': c.status, 'course': c.courseid.courseid})
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                c = Class.objects.raw(
+                    'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
+                        c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                count += 1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -115,10 +153,15 @@ class AddClass(View):
     def post(self,request):
         name = request.POST.get('name')
         info = request.POST.get('info')
+        place = request.POST.get('place')
+        time = request.POST.get('time')
+        count = request.POST.get('count')
         course = request.POST.get('course')
+        teacherid = request.POST.get('teacherid')
+        t = Teacher.objects.get(teacherid=teacherid)
         course = Course.objects.get(courseid=course)
         # 插入数据
-        if Class.objects.create(name=name, courseid=course,status=1,intro=info):
+        if Class.objects.create(name=name, courseid=course,status=1,intro=info,place=place,time=time,count=count,teacherid=t):
             data = {
                 "status": 1,
                 "result": "添加成功",
@@ -137,10 +180,12 @@ class ChangeClass(View):
     def post(self,request):
         name = request.POST.get('name')
         info = request.POST.get('info')
+        place = request.POST.get('place')
+        time = request.POST.get('time')
+        count = request.POST.get('count')
         course = request.POST.get('course')
         clasid = request.POST.get('clasid')
-        print(clasid)
-        if Class.objects.filter(classid=clasid).update(name=name,intro=info,courseid=course):
+        if Class.objects.filter(classid=clasid).update(name=name,intro=info,courseid=course,place=place,time=time,count=count):
             data = {
                 "status": 1,
                 "result": "修改成功",
@@ -157,7 +202,20 @@ class ChangeClass(View):
 #修改课程状态
 class ChangeClStatus(View):
     def post(self,request):
-        pass
+        classid = request.POST.get('classid')
+        status = request.POST.get('status')
+        if Class.objects.filter(classid=classid).update(status = status):
+            data = {
+                "status": 1,
+                "result": "修改成功",
+            }
+            return JsonResponse(data)
+        else:
+            data = {
+                "status": 0,
+                "result": "修改失败",
+            }
+            return JsonResponse(data)
 
 #获取专业以及课程信息
 class GetAllMajorCourse(View):
@@ -167,7 +225,6 @@ class GetAllMajorCourse(View):
         children = []
         for i in majors:
             course = Course.objects.filter(majorid=i.get('majorid'))
-            print(course)
             for c in course:
                 children.append({
                     'value':c.courseid,
@@ -188,3 +245,11 @@ class GetAllMajorCourse(View):
             'label': '所有专业',}
         data.append(instdata)
         return JsonResponse(data,safe=False)
+#获取所有老师
+class GetAllTeacher(View):
+    def get(self,request):
+        teachers = Teacher.objects.all()
+        data = []
+        for t in teachers:
+            data.append({'value': t.teacherid,'label': t.name+'.'+t.account})
+        return JsonResponse(data, safe=False)
