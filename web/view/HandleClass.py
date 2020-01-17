@@ -253,3 +253,52 @@ class GetAllTeacher(View):
         for t in teachers:
             data.append({'value': t.teacherid,'label': t.name+'.'+t.account})
         return JsonResponse(data, safe=False)
+#课程添加学生
+class AddStudentTClass(View):
+    def post(self,request):
+        studentid = request.POST.get('studentid')
+        classid = request.POST.get('classid')
+        s = Classstu.objects.filter(studentid=Student.objects.get(studentid=studentid),classid=Class.objects.get(classid=classid))
+        print(len(s))
+        if len(s)!=0 and s[0].status==0:
+            Classstu.objects.filter(studentid=Student.objects.get(studentid=studentid),classid=Class.objects.get(classid=classid)).update(status=1)
+            data = {
+                "status": 1,
+                "result": "该学生已经添加",
+                "data": None,
+            }
+            return JsonResponse(data)
+        elif len(s)!=0 and s[0].status==1:
+            data = {
+                "status": 1,
+                "result": "该学生已经添加",
+                "data": None,
+            }
+            return JsonResponse(data)
+        else:
+            Classstu.objects.create(studentid=Student.objects.get(studentid=studentid),classid=Class.objects.get(classid=classid),status=1)
+            data = {
+                "status": 1,
+                "result": "该学生已经添加",
+                "data": None,
+            }
+            return JsonResponse(data)
+#移除课程学生
+class RemoveStudentClass(View):
+    def post(self,request):
+        studentid = request.POST.get('studentid')
+        classid = request.POST.get('classid')
+        if Classstu.objects.filter(classid=classid,studentid=studentid).update(status=0):
+            data = {
+                "status": 1,
+                "result": "该学生已经移除",
+                "data": None,
+            }
+            return JsonResponse(data)
+        else:
+            data = {
+                "status": 1,
+                "result": "该学生移除失败",
+                "data": None,
+            }
+            return JsonResponse(data)

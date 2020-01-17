@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^web/userlist/$',StudentList.as_view()),
     url(r'^web/userlist/getAllMajor/',GetAllMajor.as_view()),
     url(r'^web/userlist/addstudent/',AddStudent.as_view()),
+    url(r'^web/userlist/getAllStudents/',GetAllStudents.as_view()),
     url(r'^web/userlist/changestudent/',ChangeStudent.as_view()),
     url(r'^web/userlist/changestatus/',ChangeSStatus.as_view()),
     url(r'^web/userclasslist/$',GetClassStudent.as_view()),
@@ -62,4 +63,7 @@ urlpatterns = [
     url(r'^web/classList/addclass/', AddClass.as_view()),
     url(r'^web/classList/changeclass/', ChangeClass.as_view()),
     url(r'^web/classList/changeCstatus/', ChangeClStatus.as_view()),
+    url(r'^web/classList/addstudentTclass/', AddStudentTClass.as_view()),
+    url(r'^web/classList/removeclassstudent/', RemoveStudentClass.as_view()),
+
 ]

@@ -190,7 +190,7 @@ class ChangeStudent(View):
         #获取原来用户的图片
         student = Student.objects.get(studentid=sid)
         f = student.headpic
-        if f != 'null':
+        if f != 'null'and len(f)!=0:
             os.remove(settings.STATIC_ROOT+f)
         # 插入数据
         Student.objects.filter(studentid=sid).update(name=name, passwd=result, account=account, majorid=major, grade=grade, headpic=filename,email=email)
@@ -227,7 +227,7 @@ class GetClassStudent(View):
         classid = request.GET.get('classid')
         if page!=None:
             #通过classid查询学生
-            classtus = Classstu.objects.filter(classid=classid)
+            classtus = Classstu.objects.filter(classid=classid,status=1)
             students = []
             for s in classtus:
                 students.append(s.studentid)
@@ -272,3 +272,12 @@ class GetClassStudent(View):
                 "len": length
             }
             return JsonResponse(data)
+#获取所有学生
+class GetAllStudents(View):
+    def get(self,request):
+        students = Student.objects.all()
+        data = []
+        for s in students:
+            data.append({'value': s.studentid, 'label': s.name + '.' + s.account})
+        return JsonResponse(data, safe=False)
+
