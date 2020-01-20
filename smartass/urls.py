@@ -19,6 +19,8 @@ from django.urls import include
 
 from android import views as av
 from web import views as we
+from web.view.HandleInfo import *
+from web.view.HandleMajor import *
 from web.view.HandleStudent import *
 from web.view.HandleTeacher import *
 from web.view.HandleCourse import *
@@ -65,5 +67,12 @@ urlpatterns = [
     url(r'^web/classList/changeCstatus/', ChangeClStatus.as_view()),
     url(r'^web/classList/addstudentTclass/', AddStudentTClass.as_view()),
     url(r'^web/classList/removeclassstudent/', RemoveStudentClass.as_view()),
-
+    #课程管理
+    url(r'^web/majorList/$', GetMajorList.as_view()),
+    url(r'^web/majorList/addmajor/', AddMajor.as_view()),
+    url(r'^web/majorList/changemajor/', ChangeMajor.as_view()),
+    url(r'^web/majorList/changeMstatus/', ChangeMStatus.as_view()),
+    #通知管理
+    url(r'^web/MCCList/$', GetMCC.as_view()),
+    url(r'^web/infoManage/sendMessage/', SendMessage.as_view()),
 ]

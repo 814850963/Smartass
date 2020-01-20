@@ -13,6 +13,17 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+# from datetime import timedelta
+#
+# # 定时任务
+# CELERYBEAT_SCHEDULE = {
+#     'add-every-30-seconds': {
+#         'task': '../web.tasks.py.test_beat',  # 任务名
+#         'schedule': timedelta(seconds=2),  # 每2s执行一次该任务
+#         'args': (2, 3)
+#     }
+# }
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,6 +54,7 @@ INSTALLED_APPS = [
     'android',
     'web',
     'corsheaders',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [

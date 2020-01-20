@@ -29,12 +29,40 @@ class ClassList(View):
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
                      'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid})
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw('select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= '+str(c.classid))
                 c = c[0]
                 temp[count]['tname'] = c.tname
                 print(temp[count])
                 count+=1
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": temp[abs(int(page) - 1) * 10:abs(int(page) - 1) * 10 + 10],
+                "page": abs(int(page)),
+                "len": length
+            }
+            return JsonResponse(data)
+        # 条件搜索
+        elif major == None and int(page) >1 and course == None:
+            classes = Class.objects.raw(
+                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid = c.majorid inner join class cc on cc.courseid = c.courseid ' )
+            length = len(classes)
+            temp = []
+            count = 0
+            for c in classes:
+                temp.append(
+                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
+                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid, 'weekday': c.weekday,
+                     'total': c.total})
+                c = Class.objects.raw(
+                    'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
+                        c.classid))
+                c = c[0]
+                temp[count]['tname'] = c.tname
+                print(temp[count])
+                count += 1
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -54,7 +82,7 @@ class ClassList(View):
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
                      'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -80,7 +108,7 @@ class ClassList(View):
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
                      'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -106,7 +134,7 @@ class ClassList(View):
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
                      'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -132,7 +160,7 @@ class ClassList(View):
                 temp.append(
                     {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
                      'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid})
+                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -160,8 +188,10 @@ class AddClass(View):
         teacherid = request.POST.get('teacherid')
         t = Teacher.objects.get(teacherid=teacherid)
         course = Course.objects.get(courseid=course)
+        total = request.POST.get('total')
+        weekday = request.POST.get('weekday')
         # 插入数据
-        if Class.objects.create(name=name, courseid=course,status=1,intro=info,place=place,time=time,count=count,teacherid=t):
+        if Class.objects.create(name=name, courseid=course,status=1,intro=info,place=place,time=time,count=count,teacherid=t,weekday=weekday,total=total):
             data = {
                 "status": 1,
                 "result": "添加成功",
@@ -185,7 +215,9 @@ class ChangeClass(View):
         count = request.POST.get('count')
         course = request.POST.get('course')
         clasid = request.POST.get('clasid')
-        if Class.objects.filter(classid=clasid).update(name=name,intro=info,courseid=course,place=place,time=time,count=count):
+        total = request.POST.get('total')
+        weekday = request.POST.get('weekday')
+        if Class.objects.filter(classid=clasid).update(name=name,intro=info,courseid=course,place=place,time=time,count=count,weekday=weekday,total=total):
             data = {
                 "status": 1,
                 "result": "修改成功",

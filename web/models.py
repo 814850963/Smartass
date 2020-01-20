@@ -93,6 +93,8 @@ class Class(models.Model):
     time = models.CharField(max_length=255, blank=True, null=True)
     count = models.IntegerField(blank=True, null=True)
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
+    weekday = models.CharField(max_length=255, blank=True, null=True)
+    total = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         managed = False
