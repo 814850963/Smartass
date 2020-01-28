@@ -25,6 +25,12 @@ from web.view.HandleStudent import *
 from web.view.HandleTeacher import *
 from web.view.HandleCourse import *
 from web.view.HandleClass import *
+from web.view.HandleTimer import *
+
+
+from django.views import static ##新增
+from django.conf import settings ##新增
+from django.conf.urls import url ##新增
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -75,4 +81,10 @@ urlpatterns = [
     #通知管理
     url(r'^web/MCCList/$', GetMCC.as_view()),
     url(r'^web/infoManage/sendMessage/', SendMessage.as_view()),
+    #定时器
+    url(r'^web/Controller/weatherControl/$', WeatherControl.as_view()),
+    #图片过滤
+    url(r'^static/pic/(?P<path>.*)$', static.serve,
+        {'document_root': settings.STATIC_ROOT}, name='static'),
+
 ]
