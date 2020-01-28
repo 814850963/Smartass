@@ -11,8 +11,28 @@ from django.shortcuts import render
 
 # render(request,'form.html') 返回网页
 from web.models import *
+from web.view import  GetWeather
 
+#启动定时器
+from apscheduler.schedulers.background import BackgroundScheduler
+from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
 
+#开启定时工作
+try:
+    # 实例化调度器
+    scheduler = BackgroundScheduler()
+    # 调度器使用DjangoJobStore()
+    scheduler.add_jobstore(DjangoJobStore(), "default")
+    # @register_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10',id='task_time')
+    @register_job(scheduler, 'cron', day_of_week='mon-sun', hour='0-23')
+    def my_job():
+        GetWeather.send_parse_urls()
+    register_events(scheduler)
+    scheduler.start()
+except Exception as e:
+    print(e)
+    # 有错误就停止定时器
+    scheduler.shutdown()
 
 def login(request):
     md5 = hashlib.md5()

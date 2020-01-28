@@ -1,6 +1,7 @@
 # coding:utf-8
 import pymysql
 
+
 #使用pymysql
 pymysql.install_as_MySQLdb()
 # """
@@ -12,4 +13,5 @@ pymysql.install_as_MySQLdb()
 #     Django引入外部数据库
 #         python manage.py inspectdb > app/models.py
 # """
+
 

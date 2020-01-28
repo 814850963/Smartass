@@ -8,7 +8,6 @@ from django.views import View
 
 from django.http import HttpResponse,JsonResponse
 import cv2 as cv
-from PIL import Image
 from smartass import settings, Utils
 from smartass.settings import BASE_DIR
 from web.models import *

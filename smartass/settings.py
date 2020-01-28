@@ -13,16 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
-# from datetime import timedelta
-#
-# # 定时任务
-# CELERYBEAT_SCHEDULE = {
-#     'add-every-30-seconds': {
-#         'task': '../web.tasks.py.test_beat',  # 任务名
-#         'schedule': timedelta(seconds=2),  # 每2s执行一次该任务
-#         'args': (2, 3)
-#     }
-# }
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '@mh9bzdn$^sv@6tu8^!_-$q=g&vpe^6we-$*#_(6b4pm)6-t$5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['cd.dryht.cn',
                  'localhost']
@@ -53,8 +44,8 @@ INSTALLED_APPS = [
     #migration 同步数据时会检测并使表结构自动同步
     'android',
     'web',
-    'corsheaders',
-    'django_celery_beat',
+    'django_apscheduler'
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [

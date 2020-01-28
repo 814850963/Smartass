@@ -266,10 +266,11 @@ class Teachercourse(models.Model):
 
 class Weather(models.Model):
     weatherid = models.AutoField(db_column='weatherId', primary_key=True)  # Field name made lowercase.
-    date = models.CharField(max_length=255)
+    date = models.DateField(blank=True, null=True)
     temp = models.CharField(max_length=255)
     intro = models.CharField(max_length=255, blank=True, null=True)
     pm = models.CharField(max_length=255, blank=True, null=True)
+    time = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
