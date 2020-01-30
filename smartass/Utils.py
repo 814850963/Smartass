@@ -2,6 +2,7 @@ import os
 from uuid import uuid4
 
 PIC_URL = '/static/pic/'
+INFO_URL = '/static/info/'
 FACEDATA_URL = '/static/facedata/'
 PENGYOU_URL = '/static/pengyou/'
 

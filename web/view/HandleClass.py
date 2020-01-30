@@ -32,7 +32,6 @@ class ClassList(View):
                 c = Class.objects.raw('select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= '+str(c.classid))
                 c = c[0]
                 temp[count]['tname'] = c.tname
-                print(temp[count])
                 count+=1
             data = {
                 "status": 1,
@@ -230,7 +229,7 @@ class ChangeClass(View):
             return JsonResponse(data)
 
 
-#修改课程状态
+#修改班级状态
 class ChangeClStatus(View):
     def post(self,request):
         classid = request.POST.get('classid')
@@ -333,3 +332,17 @@ class RemoveStudentClass(View):
                 "data": None,
             }
             return JsonResponse(data)
+#获取单个class
+class GetSingleClass(View):
+    def get(self,request):
+        classid = request.GET.get('classid')
+        c = Class.objects.get(classid=classid)
+        data = {
+            "status": 1,
+            "classname": c.name,
+            "time":c.time,
+            "place":c.place,
+            "weekday":c.weekday,
+            "total":c.total,
+        }
+        return JsonResponse(data)
