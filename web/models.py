@@ -106,6 +106,17 @@ class Check(models.Model):
         db_table = 'check'
 
 
+class Checkhistory(models.Model):
+    checkhistoryid = models.AutoField(primary_key=True)
+    good = models.IntegerField(blank=True, null=True)
+    bad = models.IntegerField(blank=True, null=True)
+    checkid = models.ForeignKey(Check, models.DO_NOTHING, db_column='checkid', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'checkhistory'
+
+
 class Checkstu(models.Model):
     checkstuid = models.AutoField(db_column='checkstuId', primary_key=True)  # Field name made lowercase.
     time = models.DateTimeField(blank=True, null=True)
@@ -178,7 +189,7 @@ class Class(models.Model):
     status = models.IntegerField(blank=True, null=True)
     courseid = models.ForeignKey('Course', models.DO_NOTHING, db_column='courseId', blank=True, null=True)  # Field name made lowercase.
     place = models.CharField(max_length=255, blank=True, null=True)
-    time = models.CharField(max_length=255, blank=True, null=True)
+    time = models.IntegerField(blank=True, null=True)
     count = models.IntegerField(blank=True, null=True)
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
     weekday = models.CharField(max_length=255, blank=True, null=True)
@@ -409,6 +420,20 @@ class Teachercourse(models.Model):
     class Meta:
         managed = False
         db_table = 'teachercourse'
+
+
+class Util(models.Model):
+    utilid = models.AutoField(db_column='utilId', primary_key=True)  # Field name made lowercase.
+    weekday = models.IntegerField(blank=True, null=True)
+    week = models.IntegerField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    year = models.IntegerField(blank=True, null=True)
+    month = models.IntegerField(blank=True, null=True)
+    day = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'util'
 
 
 class Weather(models.Model):

@@ -1,3 +1,4 @@
+import datetime
 import time
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -21,3 +22,9 @@ def getWeather():
         print('main-start:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         time.sleep(2)
         print('main-end:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+now = datetime.datetime.now()
+this_year_start = datetime.datetime(now.year, 1, 1)
+# 去年第一天和最后一天
+last_year_end = this_year_start - datetime.timedelta(days=1)
+print(last_year_end.day)

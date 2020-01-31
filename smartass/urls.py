@@ -19,7 +19,7 @@ from django.urls import include
 
 from android import views as av
 from web import views as we
-from web.view.HandleCheck import CheckList
+from web.view.HandleCheck import *
 from web.view.HandleInfo import *
 from web.view.HandleMajor import *
 from web.view.HandleStudent import *
@@ -86,6 +86,8 @@ urlpatterns = [
     url(r'^web/infoManage/getMessage/', GetMessage.as_view()),
     #考勤管理
     url(r'^web/checkList/$', CheckList.as_view()),
+    url(r'^web/checkList/startCheck/', StartCheck.as_view()),
+    url(r'^web/checkList/GetClassCheck/', GetClassCheck.as_view()),
     #定时器
     url(r'^web/Controller/weatherControl/$', WeatherControl.as_view()),
     #图片过滤
