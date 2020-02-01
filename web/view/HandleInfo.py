@@ -106,7 +106,7 @@ class GetMessage(View):
             messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
             temp = []
             for m in messages:
-                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,
+                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
                              'classid': m.classid.classid,'teachername': m.tname, 'classname': m.cname, 'status': m.status})
             length = len(messages)
             data = {
@@ -122,7 +122,7 @@ class GetMessage(View):
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
             temp = []
             for m in messages:
-                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,
+                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
                              'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
                              'status': m.status})
             length = len(messages)
@@ -138,7 +138,7 @@ class GetMessage(View):
             messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
             temp = []
             for m in messages:
-                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,
+                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
                              'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
                              'status': m.status})
             length = len(messages)
@@ -155,7 +155,7 @@ class GetMessage(View):
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
             temp = []
             for m in messages:
-                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,
+                temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
                              'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
                              'status': m.status})
             length = len(messages)

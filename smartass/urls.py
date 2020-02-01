@@ -19,9 +19,11 @@ from django.urls import include
 
 from android import views as av
 from web import views as we
+from web.view.HandleCategory import *
 from web.view.HandleCheck import *
 from web.view.HandleInfo import *
 from web.view.HandleMajor import *
+from web.view.HandleNew import *
 from web.view.HandleStudent import *
 from web.view.HandleTeacher import *
 from web.view.HandleCourse import *
@@ -88,6 +90,17 @@ urlpatterns = [
     url(r'^web/checkList/$', CheckList.as_view()),
     url(r'^web/checkList/startCheck/', StartCheck.as_view()),
     url(r'^web/checkList/GetClassCheck/', GetClassCheck.as_view()),
+    url(r'^web/checkList/GetDayCheck/', GetDayCheck.as_view()),
+    #新闻种类管理
+    url(r'^web/categoryList/$', GetCategoryList.as_view()),
+    url(r'^web/categoryList/addcategory/', AddCategory.as_view()),
+    url(r'^web/categoryList/changecategory/', ChangeCategory.as_view()),
+    url(r'^web/categoryList/changeCstatus/', ChangeCateStatus.as_view()),
+    #新闻管理
+    url(r'^web/newList/$', GetNewList.as_view()),
+    url(r'^web/newList/changeNstatus/', ChangeNewStatus.as_view()),
+    url(r'^web/newList/addNew/', AddNew.as_view()),
+    url(r'^web/newList/changeNew/', ChangeNew.as_view()),
     #定时器
     url(r'^web/Controller/weatherControl/$', WeatherControl.as_view()),
     #图片过滤

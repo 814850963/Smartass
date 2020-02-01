@@ -63,7 +63,7 @@ try:
         day = now.day
         #获取周数
         #第一学期
-        if month>9 or month<=1:
+        if month>=9 or month<=1:
             if(month<=1):
                 startday = datetime.date(year-1, 9, 17).isocalendar()
             else:
@@ -86,7 +86,7 @@ try:
                 week = nowday[1]-startday[1]
                 Util.objects.filter(utilid=22).update(weekday=nowday[2], week=week, date=now.strftime("%Y-%m-%d"), year=year, month=month, day=day)
         #第二三学期
-        elif month>2 and month<9:
+        elif month>=2 and month<9:
             startday = datetime.date(year, 2, 25).isocalendar()
             print(startday)
             nowday = datetime.date(year,month,day).isocalendar()
@@ -106,12 +106,13 @@ try:
         for c in classes:
             #把上课的节数给分割出来
             s,e = c.total.split('/')
-            if u.weekday in c.weekday and str(u.week) in range(s,e+1) and c.time==1:
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time==1:
                 cn.append(c)
                 #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')[0]
+                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                   check = check[0]
                    Check.objects.filter(classid=c,status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
@@ -127,12 +128,13 @@ try:
         for c in classes:
             # 把上课的节数给分割出来
             s, e = c.total.split('/')
-            if u.weekday in c.weekday and str(u.week) in range(s, e + 1) and c.time == 3:
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 3:
                 cn.append(c)
                 # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')[0]
+                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                    check = check[0]
                     Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
@@ -148,12 +150,13 @@ try:
         for c in classes:
             #把上课的节数给分割出来
             s,e = c.total.split('/')
-            if u.weekday in c.weekday and str(u.week) in range(s,e+1) and c.time==5:
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time==5:
                 cn.append(c)
                 #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')[0]
+                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                   check = check[0]
                    Check.objects.filter(classid=c,status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
@@ -169,12 +172,13 @@ try:
         for c in classes:
             # 把上课的节数给分割出来
             s, e = c.total.split('/')
-            if u.weekday in c.weekday and str(u.week) in range(s, e + 1) and c.time == 7:
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 7:
                 cn.append(c)
                 # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')[0]
+                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                    check = check[0]
                     Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
@@ -190,12 +194,13 @@ try:
         for c in classes:
             # 把上课的节数给分割出来
             s, e = c.total.split('/')
-            if u.weekday in c.weekday and str(u.week) in range(s, e + 1) and c.time == 9:
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 9:
                 cn.append(c)
                 # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')[0]
+                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                    check = check[0]
                     Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass

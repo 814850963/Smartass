@@ -169,6 +169,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,'static_files\pic\\')
 INFO_PIC = os.path.join(BASE_DIR,'static_files\info\\')
+NEW_PIC = os.path.join(BASE_DIR,'static_files\\new\\')
 #
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'smartass/static/')
 # PIC_ROOT = os.path.join(MEDIA_ROOT, 'pic/')

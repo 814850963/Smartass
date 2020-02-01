@@ -357,7 +357,7 @@ class New(models.Model):
     newid = models.AutoField(db_column='newId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
-    pic = models.CharField(max_length=255, blank=True, null=True)
+    time = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
     categoryid = models.ForeignKey(Category, models.DO_NOTHING, db_column='categoryId')  # Field name made lowercase.
 
