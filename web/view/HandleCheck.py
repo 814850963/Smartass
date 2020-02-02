@@ -60,7 +60,6 @@ class StartCheck(View):
                 "result": "课程异常",
             }
             return JsonResponse(data)
-        c = Check.objects.create(time=now,teacherid=teacherid[0],classid=classid[0],status=1)
         #先进行判断是否已经有考勤记录
         if Check.objects.filter(teacherid=teacherid[0],classid=classid[0]):
             data = {
@@ -68,8 +67,9 @@ class StartCheck(View):
                 "result": "开启失败(已经开启过了)",
             }
             return JsonResponse(data)
+        c = Check.objects.create(time=now, teacherid=teacherid[0], classid=classid[0], status=1)
         #通知学生考勤
-        classtus = Classstu.objects.raw('select * from Classstu where classid='+classid+' and status=1')
+        classtus = Classstu.objects.raw('select * from Classstu where classid='+str(classid[0].classid)+' and status=1')
         for clastu in classtus:
             Checkstu.objects.create(status=0,studentid=clastu.studentid,checkid=c)
         data = {
@@ -147,8 +147,6 @@ class GetDayCheck(View):
                    if checkdemo:
                         good += checkdemo[0].good
                         bad += checkdemo[0].bad
-                else:
-                    pass
         data = {
             "status": 1,
             "result": "查询成功",

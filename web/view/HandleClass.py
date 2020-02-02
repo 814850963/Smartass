@@ -212,7 +212,7 @@ class ChangeClass(View):
         time = request.POST.get('time')
         count = request.POST.get('count')
         course = request.POST.get('course')
-        clasid = request.POST.get('clasid')
+        clasid = request.POST.get('classid')
         total = request.POST.get('total')
         weekday = request.POST.get('weekday')
         if Class.objects.filter(classid=clasid).update(name=name,intro=info,courseid=course,place=place,time=time,count=count,weekday=weekday,total=total):
