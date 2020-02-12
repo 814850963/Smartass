@@ -217,15 +217,14 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     weatherscheduler.shutdown()
-
+job()
+init()
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))
     result = md5.hexdigest()
     print(result)
     admin = Admin.objects.filter(name=request.POST.get('name'),passwd=result)
-    print(admin[0])
-    print(admin[0].adminid)
     if admin:
         data = {
             "status": 1,

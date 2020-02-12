@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import include
 
 from android import views as av
+from android.view.HandleFace import *
+from android.view.HandleLogin import *
 from web import views as we
 from web.view.HandleCategory import *
 from web.view.HandleCheck import *
@@ -43,6 +45,11 @@ urlpatterns = [
     url(r'^articles/2003/$',av.article),
     url(r'^articles/(?P<year>[0-9]{4})/$',av.article_archive),
     url("android/",include("android.urls")),
+    #android端
+    url(r'^android/login/$',Login.as_view()),
+    #面部信息管理
+    url(r'^android/facelogin/$', FaceLogin.as_view()),
+    url(r'^android/recordfacedata/$',RecordFaceData.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理

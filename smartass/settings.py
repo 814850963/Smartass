@@ -168,6 +168,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static_files"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,'static_files\pic\\')
+FACE_DATA = os.path.join(BASE_DIR,'static_files\\facedata\\')
 INFO_PIC = os.path.join(BASE_DIR,'static_files\info\\')
 NEW_PIC = os.path.join(BASE_DIR,'static_files\\new\\')
 #

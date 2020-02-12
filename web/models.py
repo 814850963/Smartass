@@ -356,10 +356,12 @@ class Major(models.Model):
 class New(models.Model):
     newid = models.AutoField(db_column='newId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=255)
+    name2 = models.CharField(max_length=255, blank=True, null=True)
     intro = models.CharField(max_length=255)
     time = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
     categoryid = models.ForeignKey(Category, models.DO_NOTHING, db_column='categoryId')  # Field name made lowercase.
+    pic = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -387,6 +389,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     teacherid = models.AutoField(db_column='teacherId', primary_key=True)  # Field name made lowercase.
     account = models.CharField(max_length=255)
+    facedata = models.CharField(max_length=255, blank=True, null=True)
     pic = models.CharField(max_length=255)
     passwd = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
