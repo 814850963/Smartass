@@ -15,8 +15,11 @@ class GetNewList(View):
         news = New.objects.filter(categoryid=cid).order_by('-newid')
         temp = []
         for n in news:
-            temp.append(
-                {'newid': n.newid, 'name': n.name, 'intro':n.intro,'time':n.time, 'status': n.status})
+            if n.pic != None:
+                temp.append({'newid': n.newid, 'name': n.name, 'intro':n.intro,'time':n.time, 'status': n.status,'pic':"http://" + request.get_host() + Utils.NEW_URL  + n.pic})
+            else:
+                temp.append({'newid': n.newid, 'name': n.name, 'intro': n.intro, 'time': n.time, 'status': n.status,
+                             'pic':None})
         data = {
             "status": 1,
             "result": "查询成功",
@@ -32,6 +35,8 @@ class AddNew(View):
         # 获取时间以及转化
         now = datetime.datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')
+        i = 0
+        firsturl = None
         # 获取第一个图片
         index = content.find(';base64,')
         end = 0
@@ -51,11 +56,12 @@ class AddNew(View):
             # 把数据替换
             replaceindex = content[:index].find('src="')
             url = "http://" + request.get_host() + Utils.NEW_URL + filename
+            if i == 0:
+                firsturl =  filename
+                i += 1
             content = content.replace(content[replaceindex + 5:end], url, 1)
-            print(content)
             index = content.find(';base64,')
-            print(index)
-        new = New.objects.create(name=theme, status=1, categoryid=Category.objects.get(categoryid=cid),intro=content, time=now)
+        new = New.objects.create(name=theme, status=1, categoryid=Category.objects.get(categoryid=cid),intro=content, time=now,pic=firsturl)
         if new:
             data = {
                 "status": 1,
@@ -81,6 +87,8 @@ class ChangeNew(View):
         # 获取第一个图片
         index = content.find(';base64,')
         end = 0
+        i=0
+        firsturl = None
         while index > 0:
             # 获取图片后缀
             sign = content[end:index].split('/')[-1]
@@ -101,8 +109,11 @@ class ChangeNew(View):
             print(content)
             index = content.find(';base64,')
             print(index)
+            if i == 0:
+                firsturl =  filename
+                i += 1
         new = New.objects.filter(newid=nid).update(name=theme, categoryid=Category.objects.get(categoryid=cid), intro=content,
-                                 time=now)
+                                 time=now,pic=firsturl)
         if new:
             data = {
                 "status": 1,

@@ -18,8 +18,11 @@ from django.contrib import admin
 from django.urls import include
 
 from android import views as av
+from android.view.HandleClass import *
 from android.view.HandleFace import *
 from android.view.HandleLogin import *
+from android.view.HandleNews import *
+from android.view.HandleWeather import *
 from web import views as we
 from web.view.HandleCategory import *
 from web.view.HandleCheck import *
@@ -50,6 +53,12 @@ urlpatterns = [
     #面部信息管理
     url(r'^android/facelogin/$', FaceLogin.as_view()),
     url(r'^android/recordfacedata/$',RecordFaceData.as_view()),
+    #新闻管理
+    url(r'^android/getTop5News/$',GetTop5News.as_view()),
+    #天气管理
+    url(r'^android/getWeather/$',GetWeather.as_view()),
+    #课程表管理
+    url(r'^android/getPClass/$',GetPerClass.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理

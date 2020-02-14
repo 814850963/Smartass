@@ -356,7 +356,6 @@ class Major(models.Model):
 class New(models.Model):
     newid = models.AutoField(db_column='newId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=255)
-    name2 = models.CharField(max_length=255, blank=True, null=True)
     intro = models.CharField(max_length=255)
     time = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
@@ -401,28 +400,6 @@ class Teacher(models.Model):
     class Meta:
         managed = False
         db_table = 'teacher'
-
-
-class Teacherclass(models.Model):
-    teacherclassid = models.AutoField(db_column='teacherclassId', primary_key=True)  # Field name made lowercase.
-    teacherid = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
-    classid = models.ForeignKey(Class, models.DO_NOTHING, db_column='classId', blank=True, null=True)  # Field name made lowercase.
-    status = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'teacherclass'
-
-
-class Teachercourse(models.Model):
-    teachercourseid = models.AutoField(db_column='teachercourseId', primary_key=True)  # Field name made lowercase.
-    teacherid = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacherId')  # Field name made lowercase.
-    courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='courseId')  # Field name made lowercase.
-    status = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'teachercourse'
 
 
 class Util(models.Model):

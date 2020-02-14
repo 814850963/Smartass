@@ -31,6 +31,7 @@ try:
     # @register_job(scheduler, 'cron', day_of_week='mon-sun', hour='0-23')
     @register_job(weatherscheduler, 'interval', hours=1)
     def job():
+        print("执行了获取天气")
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
             'Referer': 'http://www.weather.com.cn/weather1d/101070201.shtml',
@@ -53,6 +54,7 @@ try:
     sched = BackgroundScheduler()
     #初始化（周数 日期 星期）
     def init():
+        print("执行了初始化")
         #获取日期
         now = datetime.datetime.now()
         #获取年
@@ -88,13 +90,12 @@ try:
         #第二三学期
         elif month>=2 and month<9:
             startday = datetime.date(year, 2, 25).isocalendar()
-            print(startday)
             nowday = datetime.date(year,month,day).isocalendar()
-            print(nowday)
             week = nowday[1] - startday[1]
             Util.objects.filter(utilid=22).update(weekday=nowday[2], week=week, date=now.strftime("%Y-%m-%d"), year=year, month=month, day=day)
     #处理早上8点的课程请求
     def am8():
+        print("执行了8")
         #获取今天的数据
         u=Util.objects.get(utilid=22)
         #获取当天8点上课的课程
@@ -117,6 +118,7 @@ try:
                 else:
                     pass
     def am9():
+        print("执行了9")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
         # 先获取当天8点上课的课程
@@ -139,6 +141,7 @@ try:
                 else:
                     pass
     def pm13():
+        print("执行了13")
         #先获取今天的数据
         u=Util.objects.get(utilid=22)
         #先获取当天8点上课的课程
@@ -161,6 +164,7 @@ try:
                 else:
                     pass
     def pm15():
+        print("执行了15")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
         # 先获取当天8点上课的课程
@@ -183,6 +187,7 @@ try:
                 else:
                     pass
     def pm18():
+        print("执行了18")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
         # 先获取当天8点上课的课程
@@ -204,13 +209,32 @@ try:
                     Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
+    def closeclass():
+        print("每周日检索需要关闭的课程")
+        # 先获取今天的数据
+        u = Util.objects.get(utilid=22)
+        # 先获取当天8点上课的课程
+        classes = Class.objects.all()
+        # 把需要上课的课程存储到cn里
+        cn = []
+        # 遍历进行筛选
+        for c in classes:
+            # 把上课的节数给分割出来
+            s, e = c.total.split('/')
+            #如果当前周等于课程结束的周数
+            if u.week > int(e):
+                #把该课程关闭
+                Class.objects.filter(classid=c.classid).update(status=0)
+
+
     sched.add_job(init,'interval',minutes=30)
     sched.add_job(am8, 'cron', hour='8', minute='00', second='00')
     sched.add_job(am9, 'cron', hour='9', minute='30', second='00')
     sched.add_job(pm13, 'cron', hour='13', minute='20', second='00')
     sched.add_job(pm15, 'cron', hour='15', minute='00', second='00')
     sched.add_job(pm18, 'cron', hour='18', minute='00', second='00')
-    # sched.add_job(my_job, 'cron', hour='20', minute='30', second='00')
+    sched.add_job(closeclass, 'cron',day_of_week=6, hour='23', minute='00', second='00')
+    # sched.add_job(closeclass, 'interval',seconds=10)
     # 每天的20:30:00执行一次
     sched.start()
 except Exception as e:
@@ -218,7 +242,7 @@ except Exception as e:
     # 有错误就停止定时器
     weatherscheduler.shutdown()
 job()
-init()
+# init()
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))
