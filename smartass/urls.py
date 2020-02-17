@@ -59,6 +59,10 @@ urlpatterns = [
     url(r'^android/getWeather/$',GetWeather.as_view()),
     #课程表管理
     url(r'^android/getPClass/$',GetPerClass.as_view()),
+    url(r'^android/getAllClass/$',GetAllClass.as_view()),
+    url(r'^android/getClassInfo/$',GetClassInfo.as_view()),
+    url(r'^android/getClassComment/$',GetClassComment.as_view()),
+    url(r'^android/sendClassComment/$',SendClassComment.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理
@@ -69,7 +73,6 @@ urlpatterns = [
     url(r'^web/userlist/changestudent/',ChangeStudent.as_view()),
     url(r'^web/userlist/changestatus/',ChangeSStatus.as_view()),
     url(r'^web/userclasslist/$',GetClassStudent.as_view()),
-
     #教师管理
     url(r'^web/teacherList/$',TeacherList.as_view()),
     url(r'^web/teacherList/getAllMajor/',GetAllMajor.as_view()),

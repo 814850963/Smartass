@@ -29,7 +29,7 @@ try:
     weatherscheduler.add_jobstore(DjangoJobStore(), "default")
     # @register_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10',id='task_time')
     # @register_job(scheduler, 'cron', day_of_week='mon-sun', hour='0-23')
-    @register_job(weatherscheduler, 'interval', hours=1)
+    @register_job(weatherscheduler, 'interval', hours=1,coalesce=True,misfire_grace_time=30,replace_existing=True)
     def job():
         print("执行了获取天气")
         headers = {
@@ -227,13 +227,13 @@ try:
                 Class.objects.filter(classid=c.classid).update(status=0)
 
 
-    sched.add_job(init,'interval',minutes=30)
-    sched.add_job(am8, 'cron', hour='8', minute='00', second='00')
-    sched.add_job(am9, 'cron', hour='9', minute='30', second='00')
-    sched.add_job(pm13, 'cron', hour='13', minute='20', second='00')
-    sched.add_job(pm15, 'cron', hour='15', minute='00', second='00')
-    sched.add_job(pm18, 'cron', hour='18', minute='00', second='00')
-    sched.add_job(closeclass, 'cron',day_of_week=6, hour='23', minute='00', second='00')
+    sched.add_job(init,'interval',minutes=30,coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(am8, 'cron', hour='8', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(am9, 'cron', hour='9', minute='30', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(pm13, 'cron', hour='13', minute='20', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(pm15, 'cron', hour='15', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(pm18, 'cron', hour='18', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(closeclass, 'cron',day_of_week=6, hour='23', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
     # sched.add_job(closeclass, 'interval',seconds=10)
     # 每天的20:30:00执行一次
     sched.start()
@@ -241,7 +241,7 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     weatherscheduler.shutdown()
-job()
+# job()
 # init()
 def login(request):
     md5 = hashlib.md5()

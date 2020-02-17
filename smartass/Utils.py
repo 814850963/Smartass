@@ -7,7 +7,7 @@ NEW_URL = '/static/new/'
 FACEDATA_URL = '/static/facedata/'
 PENGYOU_URL = '/static/pengyou/'
 HOST = 'http://cd.dryht.cn:25200'
-
+HOST1 = 'cd.dryht.cn:25200'
 #生成随机名字
 def makerandomuuid(ext):
     filename = '{}.{}'.format(uuid4().hex, ext)

@@ -204,6 +204,7 @@ class Classcom(models.Model):
     classcomid = models.AutoField(db_column='classcomId', primary_key=True)  # Field name made lowercase.
     intro = models.CharField(max_length=255)
     time = models.DateTimeField()
+    classid = models.ForeignKey(Class, models.DO_NOTHING, db_column='classid')
     studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
     status = models.IntegerField(blank=True, null=True)
 
