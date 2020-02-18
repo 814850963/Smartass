@@ -55,6 +55,9 @@ urlpatterns = [
     url(r'^android/recordfacedata/$',RecordFaceData.as_view()),
     #新闻管理
     url(r'^android/getTop5News/$',GetTop5News.as_view()),
+    url(r'^android/getNews/$',GetAllNewTitle.as_view()),
+    url(r'^android/getANew/$',GetANew.as_view()),
+    url(r'^android/getNewsList/$',GetNewsList.as_view()),
     #天气管理
     url(r'^android/getWeather/$',GetWeather.as_view()),
     #课程表管理
