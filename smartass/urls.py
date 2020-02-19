@@ -66,6 +66,8 @@ urlpatterns = [
     url(r'^android/getClassInfo/$',GetClassInfo.as_view()),
     url(r'^android/getClassComment/$',GetClassComment.as_view()),
     url(r'^android/sendClassComment/$',SendClassComment.as_view()),
+    url(r'^android/getInstantClass/$',GetInstantClass.as_view()),
+    url(r'^android/getTeacherCheck/$',GetTeacherCheck.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理

@@ -100,113 +100,89 @@ try:
         u=Util.objects.get(utilid=22)
         #获取当天8点上课的课程
         classes = Class.objects.all()
-        #把需要上课的课程存储到cn里
-        cn = []
-        checks = []
         #遍历进行筛选
         for c in classes:
             #把上课的节数给分割出来
             s,e = c.total.split('/')
             if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time==1:
-                cn.append(c)
                 #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')
+                check = Check.objects.filter(classid=c,status=1).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                   check = check[0]
-                   Check.objects.filter(classid=c,status=0).order_by('-checkid')[0].update(status=0)
+                   Check.objects.filter(classid=c,status=1).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
     def am9():
         print("执行了9")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
-        # 先获取当天8点上课的课程
+        # 先获取当天9:40上课的课程
         classes = Class.objects.all()
         # 把需要上课的课程存储到cn里
-        cn = []
-        checks = []
         # 遍历进行筛选
         for c in classes:
             # 把上课的节数给分割出来
             s, e = c.total.split('/')
-            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 3:
-                cn.append(c)
+            if str(u.weekday) in c.weekday and u.week in range(int(s), int(e) + 1) and c.time == 3:
                 # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
+                check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    check = check[0]
-                    Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
     def pm13():
         print("执行了13")
         #先获取今天的数据
         u=Util.objects.get(utilid=22)
-        #先获取当天8点上课的课程
+        #先获取当天13点上课的课程
         classes = Class.objects.all()
-        #把需要上课的课程存储到cn里
-        cn = []
-        checks = []
-        #遍历进行筛选
+        # 遍历进行筛选
         for c in classes:
-            #把上课的节数给分割出来
-            s,e = c.total.split('/')
-            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time==5:
-                cn.append(c)
-                #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')
-                #如果教师没有申请打卡则不动如果申请则关闭打卡通道
+            # 把上课的节数给分割出来
+            s, e = c.total.split('/')
+            if str(u.weekday) in c.weekday and u.week in range(int(s), int(e) + 1) and c.time == 5:
+                # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
+                check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
+                # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                   check = check[0]
-                   Check.objects.filter(classid=c,status=0).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
     def pm15():
         print("执行了15")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
-        # 先获取当天8点上课的课程
+        # 先获取当天15点上课的课程
         classes = Class.objects.all()
-        # 把需要上课的课程存储到cn里
-        cn = []
-        checks = []
         # 遍历进行筛选
         for c in classes:
             # 把上课的节数给分割出来
             s, e = c.total.split('/')
-            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 7:
-                cn.append(c)
+            if str(u.weekday) in c.weekday and u.week in range(int(s), int(e) + 1) and c.time == 7:
                 # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
+                check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    check = check[0]
-                    Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
     def pm18():
         print("执行了18")
         # 先获取今天的数据
         u = Util.objects.get(utilid=22)
-        # 先获取当天8点上课的课程
+        # 先获取当天18点上课的课程
         classes = Class.objects.all()
-        # 把需要上课的课程存储到cn里
-        cn = []
-        checks = []
-        # 遍历进行筛选
+        # #遍历进行筛选
         for c in classes:
-            # 把上课的节数给分割出来
-            s, e = c.total.split('/')
-            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time == 9:
-                cn.append(c)
-                # 拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c, status=0).order_by('-checkid')
-                # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
+            #把上课的节数给分割出来
+            s,e = c.total.split('/')
+            if str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time==9:
+                #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
+                check = Check.objects.filter(classid=c,status=1).order_by('-checkid')
+                #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    check = check[0]
-                    Check.objects.filter(classid=c, status=0).order_by('-checkid')[0].update(status=0)
+                   Check.objects.filter(classid=c,status=1).order_by('-checkid')[0].update(status=0)
                 else:
                     pass
     def closeclass():

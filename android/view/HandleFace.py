@@ -80,7 +80,7 @@ class RecordFaceData(View):
             print("特征均值 / The mean of features:", list(features_mean_personX))
             print("所有录入人脸数据存入 / Save all the features of faces registered into: "+filename)
             #0为老师
-            if identity == 0:
+            if identity == '0':
                 file = Teacher.objects.get(teacherid=authon).facedata
                 if file !=None:
                     os.remove(file)
@@ -112,11 +112,12 @@ class FaceLogin(View):
         files = request.FILES.getlist("img","")
         authon = request.POST.get('auth')
         identity = request.POST.get('identity')
+        classid = request.POST.get("classid")
         print(request.POST)
         print(request.FILES)
         # 1. Check 存放所有人脸特征的 csv
         # 0为老师
-        if identity == 0:
+        if identity == '0':
             filename = Teacher.objects.get(teacherid=authon).facedata
         else:
             filename = Student.objects.get(studentid=authon).facedata
@@ -177,6 +178,9 @@ class FaceLogin(View):
                             # 空数据 person_X
                             e_distance=999999999
                     if e_distance < 0.4:
+                        if identity == '1':
+                            c = Check.objects.filter(classid=classid, status=1)[0]
+                            Checkstu.objects.filter(status=0,studentid=Student.objects.get(studentid=authon),checkid=c).update(status=1)
                         data = {
                             "status": '1',
                             "result": "考勤成功",
