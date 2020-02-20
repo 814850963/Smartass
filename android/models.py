@@ -135,10 +135,14 @@ class Circle(models.Model):
     intro = models.CharField(max_length=255)
     time = models.DateTimeField()
     status = models.IntegerField(blank=True, null=True)
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid', blank=True, null=True)
+    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId', blank=True, null=True)  # Field name made lowercase.
     pic1 = models.CharField(max_length=255, blank=True, null=True)
     pic2 = models.CharField(max_length=255, blank=True, null=True)
     pic3 = models.CharField(max_length=255, blank=True, null=True)
+    zan = models.IntegerField(blank=True, null=True)
+    com = models.PositiveIntegerField(blank=True, null=True)
+    read = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -160,8 +164,8 @@ class Circlecom(models.Model):
 
 class Circlelike(models.Model):
     circlelikeid = models.AutoField(db_column='circlelikeId', primary_key=True)  # Field name made lowercase.
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
-    num = models.IntegerField(blank=True, null=True)
+    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId', blank=True, null=True)  # Field name made lowercase.
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid', blank=True, null=True)
     circleid = models.ForeignKey(Circle, models.DO_NOTHING, db_column='circleId')  # Field name made lowercase.
     status = models.IntegerField(blank=True, null=True)
 

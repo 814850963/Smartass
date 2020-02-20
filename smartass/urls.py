@@ -20,6 +20,7 @@ from django.urls import include
 from android import views as av
 from android.view.HandleClass import *
 from android.view.HandleFace import *
+from android.view.HandleFriend import *
 from android.view.HandleLogin import *
 from android.view.HandleNews import *
 from android.view.HandleWeather import *
@@ -68,6 +69,9 @@ urlpatterns = [
     url(r'^android/sendClassComment/$',SendClassComment.as_view()),
     url(r'^android/getInstantClass/$',GetInstantClass.as_view()),
     url(r'^android/getTeacherCheck/$',GetTeacherCheck.as_view()),
+    #朋友圈管理
+    url(r'^android/getfriendshare/$',GetFriendShare.as_view()),
+    url(r'^android/getmyshare/$',GetMyShare.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理

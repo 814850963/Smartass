@@ -30,7 +30,7 @@ class GetPerClass(View):
                     elif weekday == '2':
                         weekday = 'tue'
                     elif weekday == '3':
-                        weekday = 'web'
+                        weekday = 'wed'
                     elif weekday == '4':
                         weekday = 'thur'
                     elif weekday == '5':
@@ -66,7 +66,7 @@ class GetPerClass(View):
                     elif weekday == '2':
                         weekday = 'tue'
                     elif weekday == '3':
-                        weekday = 'web'
+                        weekday = 'wed'
                     elif weekday == '4':
                         weekday = 'thur'
                     elif weekday == '5':
@@ -75,7 +75,6 @@ class GetPerClass(View):
                         weekday = 'sat'
                     elif weekday == '7':
                         weekday = 'sun'
-
                     data.append({
                         'classid': c.classid,
                         'name': c.name,
