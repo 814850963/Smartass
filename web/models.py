@@ -384,6 +384,7 @@ class Student(models.Model):
     email = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     status = models.IntegerField()
+    background = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -401,6 +402,7 @@ class Teacher(models.Model):
     email = models.CharField(max_length=255)
     majorid = models.ForeignKey(Major, models.DO_NOTHING, db_column='majorId')  # Field name made lowercase.
     status = models.IntegerField(blank=True, null=True)
+    background = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

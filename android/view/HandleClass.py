@@ -199,7 +199,7 @@ class GetInstantClass(View):
             weekday = cls.weekday.split('/')
             total = cls.total.split('/')
             #周数匹配
-            if today.week <  int(total[1]):
+            if today.week <  int(total[1]) and today.week >= int(total[0]):
                 #如果今天跟课程日期一样
                 if str(today.weekday) in weekday:
                     #获取现在的时间
@@ -208,10 +208,10 @@ class GetInstantClass(View):
                     if now.hour<8:
                         if cls.time == 1:
                             c=cls
-                    elif now.hour<=9 and now.second<=39:
+                    elif now.hour<=9 and now.minute<=39:
                         if cls.time == 3:
                             c = cls
-                    elif now.hour<13 and now.second<=19:
+                    elif now.hour<13 and now.minute<=19:
                         if cls.time == 5:
                             c = cls
                     elif now.hour<15:
@@ -234,6 +234,7 @@ class GetInstantClass(View):
             c = {"classid":c.classid,"name":c.name,"place":c.place,"tname":c.teacherid.name,"time":c.time}
         else:
             c = {"classid": None, "name": '今天没有课程哦', "place": "无教室", "tname": "无教师","time":"今天好好休息吧"}
+        print(c)
         data = {
             "data" : c,
             "status": '1',
@@ -243,6 +244,7 @@ class GetInstantClass(View):
 #检测考勤状态
 class GetTeacherCheck(View):
     def post(self,request):
+        print(request.POST)
         if request.POST.get("classid") == "null":
             data = {
                 "status": '0',

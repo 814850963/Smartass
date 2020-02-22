@@ -171,6 +171,7 @@ STATIC_ROOT = os.path.join(BASE_DIR,'static_files\pic\\')
 FACE_DATA = os.path.join(BASE_DIR,'static_files\\facedata\\')
 INFO_PIC = os.path.join(BASE_DIR,'static_files\info\\')
 NEW_PIC = os.path.join(BASE_DIR,'static_files\\new\\')
+FRIEND_PIC = os.path.join(BASE_DIR,'static_files\\pengyou\\')
 #
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'smartass/static/')
 # PIC_ROOT = os.path.join(MEDIA_ROOT, 'pic/')

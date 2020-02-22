@@ -51,6 +51,7 @@ urlpatterns = [
     url("android/",include("android.urls")),
     #android端
     url(r'^android/login/$',Login.as_view()),
+    url(r'^android/getPersonProfile/$',GetPersonProfile.as_view()),
     #面部信息管理
     url(r'^android/facelogin/$', FaceLogin.as_view()),
     url(r'^android/recordfacedata/$',RecordFaceData.as_view()),
@@ -72,6 +73,8 @@ urlpatterns = [
     #朋友圈管理
     url(r'^android/getfriendshare/$',GetFriendShare.as_view()),
     url(r'^android/getmyshare/$',GetMyShare.as_view()),
+    url(r'^android/setbackground/$',SetBackGround.as_view()),
+    url(r'^android/sendmessage/$',SendFMessage.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理
