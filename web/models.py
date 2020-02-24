@@ -154,6 +154,8 @@ class Circlecom(models.Model):
     intro = models.CharField(max_length=255)
     time = models.DateTimeField()
     status = models.IntegerField(blank=True, null=True)
+    zan = models.IntegerField(blank=True, null=True)
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
     studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
     circleid = models.ForeignKey(Circle, models.DO_NOTHING, db_column='circleId')  # Field name made lowercase.
 
@@ -176,7 +178,7 @@ class Circlelike(models.Model):
 
 class Circomlike(models.Model):
     circlecomlikeid = models.AutoField(db_column='circlecomlikeId', primary_key=True)  # Field name made lowercase.
-    num = models.IntegerField(blank=True, null=True)
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
     studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
     circlecomid = models.ForeignKey(Circlecom, models.DO_NOTHING, db_column='circlecomId')  # Field name made lowercase.
     status = models.IntegerField(blank=True, null=True)

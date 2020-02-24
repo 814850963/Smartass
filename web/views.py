@@ -24,12 +24,35 @@ from web.models import *
 #开启定时工作
 try:
     # 实例化调度器
-    weatherscheduler = BackgroundScheduler()
-    # 调度器使用DjangoJobStore()
-    weatherscheduler.add_jobstore(DjangoJobStore(), "default")
-    # @register_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10',id='task_time')
-    # @register_job(scheduler, 'cron', day_of_week='mon-sun', hour='0-23')
-    @register_job(weatherscheduler, 'interval', hours=1,coalesce=True,misfire_grace_time=30,replace_existing=True)
+    # weatherscheduler = BackgroundScheduler()
+    # # 调度器使用DjangoJobStore()
+    # weatherscheduler.add_jobstore(DjangoJobStore(), "default")
+    # # @register_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10',id='task_time')
+    # # @register_job(scheduler, 'cron', day_of_week='mon-sun', hour='0-23')
+    # @register_job(weatherscheduler, 'interval', hours=1,coalesce=True,misfire_grace_time=30,replace_existing=True)
+    # def job():
+    #     print("执行了获取天气")
+    #     headers = {
+    #         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
+    #         'Referer': 'http://www.weather.com.cn/weather1d/101070201.shtml',
+    #     }
+    #     url = 'http://d1.weather.com.cn/sk_2d/101070201.html?_=' + str(int(round(time.time() * 1000)))
+    #     response = requests.get(url, headers=headers)
+    #     text = response.content.decode('utf-8')
+    #     print(text)
+    #     # str 转 json
+    #     res = json.loads(text[text.index("{"):])
+    #     date = datetime.date.today()
+    #     temp = res['temp']
+    #     intro = res['WD'] + res['WS'] + " " + res['weather']
+    #     pm = res['aqi_pm25']
+    #     t = time.time()
+    #     Weather.objects.create(date=date, intro=intro, temp=temp, pm=pm, time=t)
+    # register_events(weatherscheduler)
+    # weatherscheduler.start()
+    # 控制考勤
+    sched = BackgroundScheduler()
+    #获取天气
     def job():
         print("执行了获取天气")
         headers = {
@@ -48,10 +71,6 @@ try:
         pm = res['aqi_pm25']
         t = time.time()
         Weather.objects.create(date=date, intro=intro, temp=temp, pm=pm, time=t)
-    register_events(weatherscheduler)
-    weatherscheduler.start()
-    # 控制考勤
-    sched = BackgroundScheduler()
     #初始化（周数 日期 星期）
     def init():
         print("执行了初始化")
@@ -85,13 +104,13 @@ try:
                 week = week+nowday[1]
                 Util.objects.filter(utilid=22).update(weekday=nowday[2],week=week,date=now.strftime("%Y-%m-%d"),year=year,month=month,day=day)
             else:
-                week = nowday[1]-startday[1]
+                week = nowday[1]-startday[1] +1
                 Util.objects.filter(utilid=22).update(weekday=nowday[2], week=week, date=now.strftime("%Y-%m-%d"), year=year, month=month, day=day)
         #第二三学期
         elif month>=2 and month<9:
             startday = datetime.date(year, 2, 25).isocalendar()
             nowday = datetime.date(year,month,day).isocalendar()
-            week = nowday[1] - startday[1]
+            week = nowday[1] - startday[1] +1
             Util.objects.filter(utilid=22).update(weekday=nowday[2], week=week, date=now.strftime("%Y-%m-%d"), year=year, month=month, day=day)
     #处理早上8点的课程请求
     def am8():
@@ -203,21 +222,22 @@ try:
                 Class.objects.filter(classid=c.classid).update(status=0)
 
 
-    sched.add_job(init,'interval',minutes=30,coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(am8, 'cron', hour='8', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(am9, 'cron', hour='9', minute='30', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(pm13, 'cron', hour='13', minute='20', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(pm15, 'cron', hour='15', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(pm18, 'cron', hour='18', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
-    sched.add_job(closeclass, 'cron',day_of_week=6, hour='23', minute='00', second='00',coalesce=True,misfire_grace_time=30,replace_existing=True)
+    sched.add_job(job, 'interval', hours=1, coalesce=True, misfire_grace_time=1000, replace_existing=True)
+    sched.add_job(init,'interval',minutes=30,coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(am8, 'cron', hour='8', minute='00', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(am9, 'cron', hour='9', minute='30', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(pm13, 'cron', hour='13', minute='20', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(pm15, 'cron', hour='15', minute='00', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(pm18, 'cron', hour='18', minute='00', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
+    sched.add_job(closeclass, 'cron',day_of_week=6, hour='23', minute='00', second='00',coalesce=True,misfire_grace_time=1000,replace_existing=True)
     # sched.add_job(closeclass, 'interval',seconds=10)
     # 每天的20:30:00执行一次
     sched.start()
 except Exception as e:
     print(e)
     # 有错误就停止定时器
-    weatherscheduler.shutdown()
-#job()
+    # weatherscheduler.shutdown()
+job()
 init()
 def login(request):
     md5 = hashlib.md5()

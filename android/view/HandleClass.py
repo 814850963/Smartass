@@ -204,22 +204,27 @@ class GetInstantClass(View):
                 if str(today.weekday) in weekday:
                     #获取现在的时间
                     now = datetime.datetime.now()
+                    print(type(cls.time))
+                    print(cls.time==9)
                     #早上8点之前 0-23范围
+                    if now.hour<18:
+                        if cls.time == 9:
+                            print(c)
+                            c = cls
+                    if now.hour<15:
+                        if cls.time == 7:
+                            c = cls
+                    if now.hour<13 and now.minute<=19:
+                        if cls.time == 5:
+                            c = cls
+                    if now.hour<=9 and now.minute<=39:
+                        if cls.time == 3:
+                            c = cls
                     if now.hour<8:
                         if cls.time == 1:
                             c=cls
-                    elif now.hour<=9 and now.minute<=39:
-                        if cls.time == 3:
-                            c = cls
-                    elif now.hour<13 and now.minute<=19:
-                        if cls.time == 5:
-                            c = cls
-                    elif now.hour<15:
-                        if cls.time == 7:
-                            c = cls
-                    elif now.hour<18:
-                        if cls.time == 9:
-                            c = cls
+
+        print(c)
         if c !=None:
             if c.time == 1:
                 c.time = "8:00"
@@ -254,8 +259,8 @@ class GetTeacherCheck(View):
         classid = Class.objects.get(classid=request.POST.get("classid"))
         auth = request.POST.get("auth")
         #获取教师是否开启了考勤
-        c = Check.objects.filter(classid=classid,status=1).order_by('-checkid')[0]
-        if c == None:
+        c = Check.objects.filter(classid=classid,status=1).order_by('-checkid')
+        if len(c) == 0:
             data = {
                 "status": '0',
                 "result": "没有开启考勤",

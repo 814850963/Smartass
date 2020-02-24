@@ -23,6 +23,7 @@ from android.view.HandleFace import *
 from android.view.HandleFriend import *
 from android.view.HandleLogin import *
 from android.view.HandleNews import *
+from android.view.HandleNotice import *
 from android.view.HandleWeather import *
 from web import views as we
 from web.view.HandleCategory import *
@@ -75,6 +76,16 @@ urlpatterns = [
     url(r'^android/getmyshare/$',GetMyShare.as_view()),
     url(r'^android/setbackground/$',SetBackGround.as_view()),
     url(r'^android/sendmessage/$',SendFMessage.as_view()),
+    url(r'^android/getfriendinfo/$',GetFriendInfo.as_view()),
+    url(r'^android/getfriendcomment/$',GetFriendComment.as_view()),
+    url(r'^android/friendcirclelike/$',FriendCircleLike.as_view()),
+    url(r'^android/friendcomlike/$',FriendComLike.as_view()),
+    url(r'^android/sendfriendcomment/$',SendFriendComment.as_view()),
+    #通知管理
+    url(r'^android/getclassnotice/$',GetClassNotice.as_view()),
+    url(r'^android/getallnotice/$',GetAllNotice.as_view()),
+    url(r'^android/getnoticeinfo/$',GetNoticeInfo.as_view()),
+    url(r'^android/checknotice/$',CheckNotice.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理
