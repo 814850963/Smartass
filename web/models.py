@@ -432,6 +432,7 @@ class Weather(models.Model):
     intro = models.CharField(max_length=255, blank=True, null=True)
     pm = models.CharField(max_length=255, blank=True, null=True)
     time = models.IntegerField(blank=True, null=True)
+    weather = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

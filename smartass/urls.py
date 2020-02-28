@@ -53,6 +53,7 @@ urlpatterns = [
     #android端
     url(r'^android/login/$',Login.as_view()),
     url(r'^android/getPersonProfile/$',GetPersonProfile.as_view()),
+    url(r'^android/getFriendProfile/$',GetFriendProfile.as_view()),
     #面部信息管理
     url(r'^android/facelogin/$', FaceLogin.as_view()),
     url(r'^android/recordfacedata/$',RecordFaceData.as_view()),
@@ -81,11 +82,17 @@ urlpatterns = [
     url(r'^android/friendcirclelike/$',FriendCircleLike.as_view()),
     url(r'^android/friendcomlike/$',FriendComLike.as_view()),
     url(r'^android/sendfriendcomment/$',SendFriendComment.as_view()),
+    url(r'^android/getperlike/$',GetPerLike.as_view()),
+    url(r'^android/followperson/$',FollowPerson.as_view()),
+    url(r'^android/searchfriend/$',SearchFriend.as_view()),
     #通知管理
     url(r'^android/getclassnotice/$',GetClassNotice.as_view()),
     url(r'^android/getallnotice/$',GetAllNotice.as_view()),
     url(r'^android/getnoticeinfo/$',GetNoticeInfo.as_view()),
     url(r'^android/checknotice/$',CheckNotice.as_view()),
+    url(r'^android/sendnoticeclass/$',SendNoticeClass.as_view()),
+    #修改个人信息
+    url(r'^android/changeintro/$',ChangeIntro.as_view()),
     #web端
     url(r'^web/login/$',we.login),
     #学生管理

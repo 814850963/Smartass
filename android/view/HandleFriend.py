@@ -101,10 +101,15 @@ class GetMyShare(View):
     def post(self,request):
         auth = request.POST.get('auth')
         identity = request.POST.get('identity')
+        if request.POST.get('iden')!=None:
+            identity = request.POST.get('iden')
+        if request.POST.get('id') != None:
+            auth = request.POST.get('id')
+        print(request.POST)
         if identity == '1':
-            circles = Circle.objects.filter(studentid=auth).order_by('-circleid')
+            circles = Circle.objects.filter(studentid=auth,status=1).order_by('-circleid')
         elif identity == '0':
-            circles = Circle.objects.filter(teacherid=auth).order_by('-circleid')
+            circles = Circle.objects.filter(teacherid=auth,status=1).order_by('-circleid')
         # 封装数据
         data = []
         for c in circles:
@@ -112,7 +117,7 @@ class GetMyShare(View):
             if identity == '1':
                     pname = c.studentid.name
             # 老师
-            elif identity == '2':
+            elif identity == '0':
                     pname = c.teacherid.name
             # 获取头像
             if (c.studentid == None):
@@ -264,7 +269,7 @@ class GetFriendInfo(View):
                 c.pic2 = Utils.HOST+Utils.PENGYOU_URL+c.pic2
             if c.pic3 !=None:
                 c.pic3 = Utils.HOST+Utils.PENGYOU_URL+c.pic3
-            data = {"ppic":Utils.HOST+Utils.PIC_URL+t.pic,"pname":t.name,"cname":c.name,"intro":c.intro,"time":c.time,"pic1":Utils.HOST+Utils.PENGYOU_URL+c.pic1,"pic2":Utils.HOST+Utils.PENGYOU_URL+c.pic2,"pic3":Utils.HOST+Utils.PENGYOU_URL+c.pic3}
+            data = {"ppic":Utils.HOST+Utils.PIC_URL+t.pic,"pname":t.name,"cname":c.name,"intro":c.intro,"time":c.time,"pic1":c.pic1,"pic2":c.pic2,"pic3":c.pic3}
         data = {
             "status": '1',
             "result": "添加成功",
@@ -426,5 +431,117 @@ class SendFriendComment(View):
         data = {
             "status": '1',
             "result": "添加成功",
+        }
+        return JsonResponse(data)
+#获取关注的人
+class GetPerLike(View):
+    def post(self,request):
+        auth = request.POST.get('auth')
+        identity = request.POST.get('identity')
+        data = []
+        if identity == '1':
+            fs = Follow.objects.filter(fid=auth,fidentify=1,status=1)
+            for f in fs:
+                #如果被关注的人是教师
+                if f.bfidentify == 0:
+                    t = Teacher.objects.get(teacherid=f.bfid)
+                    data.append({
+                        'id':t.teacherid,
+                        "name": t.name,
+                        "pic": Utils.HOST + Utils.PIC_URL + t.pic,
+                        "iden": '0'
+                    })
+                else:
+                    s = Student.objects.get(studentid=f.bfid)
+                    data.append({
+                        'id': s.studentid,
+                        "name": s.name,
+                        "pic": Utils.HOST + Utils.PIC_URL + s.headpic,
+                        "iden": '1'
+                    })
+        else:
+            fs = Follow.objects.filter(fid=auth, fidentify=0, status=1)
+            for f in fs:
+                # 如果被关注的人是教师
+                if f.bfidentify == 0:
+                    t = Teacher.objects.get(teacherid=f.bfid)
+                    data.append({
+                        'id': t.teacherid,
+                        "name": t.name,
+                        "pic": Utils.HOST + Utils.PIC_URL + t.pic,
+                        "iden": '0'
+                    })
+                else:
+                    s = Student.objects.get(studentid=f.bfid)
+                    data.append({
+                        'id': s.studentid,
+                        "name": s.name,
+                        "pic": Utils.HOST + Utils.PIC_URL + s.headpic,
+                        "iden": '1'
+                    })
+        data = {
+            "status": '1',
+            "result": "添加成功",
+            "data":data
+        }
+        return JsonResponse(data)
+
+#关注某人
+class FollowPerson(View):
+    def post(self,request):
+        id = request.POST.get('id')
+        auth = request.POST.get('auth')
+        iden = request.POST.get('iden')
+        identity = request.POST.get('identity')
+        f = Follow.objects.filter(fid=auth,bfid=id,fidentify=identity,bfidentify=iden)
+        #如果有数据
+        if len(f)!= 0:
+            if f[0].status == 0:
+                Follow.objects.filter(fid=auth, bfid=id, fidentify=identity, bfidentify=iden).update(status=1)
+                data = {
+                    "status": '1',
+                    "result": "添加成功",
+                    "data": '1'
+                }
+            else:
+                Follow.objects.filter(fid=auth, bfid=id, fidentify=identity, bfidentify=iden).update(status=0)
+                data = {
+                    "status": '1',
+                    "result": "添加成功",
+                    "data": '0'
+                }
+        else:
+            Follow.objects.create(fid=auth, bfid=id, fidentify=identity, bfidentify=iden,status=1)
+            data = {
+                "status": '1',
+                "result": "添加成功",
+                "data": '1'
+            }
+        return JsonResponse(data)
+#搜索好友
+class SearchFriend(View):
+    def post(self,request):
+        searchinfo = request.POST.get("searchinfo")
+        data = []
+        if len(Student.objects.filter(name__icontains=searchinfo)) != 0:
+            for stu in Student.objects.filter(name__icontains=searchinfo):
+                data.append({
+                    'id':stu.studentid,
+                    'iden':'1',
+                    'name':stu.name,
+                    'pic':Utils.HOST+Utils.PIC_URL+stu.headpic
+                })
+        if len(Teacher.objects.filter(name__icontains=searchinfo)) != 0:
+            for tea in Teacher.objects.filter(name__icontains=searchinfo):
+                data.append({
+                    'id': tea.teacherid,
+                    'iden': '0',
+                    'name': tea.name,
+                    'pic': Utils.HOST + Utils.PIC_URL + tea.pic
+                })
+        data = {
+            "status": '1',
+            "result": "添加成功",
+            "data": data
         }
         return JsonResponse(data)

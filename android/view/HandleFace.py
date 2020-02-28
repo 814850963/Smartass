@@ -1,3 +1,5 @@
+import hashlib
+
 from django.http import JsonResponse
 from django.views import View
 
@@ -113,15 +115,24 @@ class FaceLogin(View):
         authon = request.POST.get('auth')
         identity = request.POST.get('identity')
         classid = request.POST.get("classid")
+        account = request.POST.get("account")
+        passwd = request.POST.get("passwd")
         print(request.POST)
         print(request.FILES)
+        filename = None
         # 1. Check 存放所有人脸特征的 csv
         # 0为老师
-        if identity == '0':
+        if identity == '0' and account == None:
             filename = Teacher.objects.get(teacherid=authon).facedata
-        else:
+        elif identity == '1' and account == None:
             filename = Student.objects.get(studentid=authon).facedata
         print(filename)
+        if account !=None and passwd!=None:
+            s = Student.objects.filter(account=account)
+            if len(s)!=0:
+                filename = s[0].facedata
+            else:
+                filename = Teacher.objects.get(account=account).facedata
         if filename == None:
             data = {
                 "status": 0,
@@ -178,15 +189,34 @@ class FaceLogin(View):
                             # 空数据 person_X
                             e_distance=999999999
                     if e_distance < 0.4:
-                        if identity == '1':
+                        if identity == '1' and classid!=None:
+                            print(1231231212)
                             c = Check.objects.filter(classid=classid, status=1)[0]
                             Checkstu.objects.filter(status=0,studentid=Student.objects.get(studentid=authon),checkid=c).update(status=1)
+
+                        if passwd != None and account !=None:
+                            print(312321321312)
+                            s = Student.objects.filter(account=account)
+                            print(s)
+                            print(len(s))
+                            if len(s) !=0:
+                                # md5加密
+                                md5 = hashlib.md5()
+                                md5.update(passwd.encode("utf-8"))
+                                result = md5.hexdigest()
+                                print(result)
+                                Student.objects.filter(account=account).update(passwd=result)
+                            else:
+                                # md5加密
+                                md5 = hashlib.md5()
+                                md5.update(passwd.encode("utf-8"))
+                                result = md5.hexdigest()
+                                Teacher.objects.filter(teacherid=account).update(passwd=result)
                         data = {
                             "status": '1',
                             "result": "考勤成功",
                             "authen": None
                         }
-
                         return JsonResponse(data)
                     else:
                         print("Unknown person")

@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import JsonResponse
 from django.views import View
 
@@ -31,7 +33,7 @@ class GetAllNotice(View):
                 data.append({
                     "infoid": i.infoid,
                     "cname": i.classid.name,
-                    "tname": i.teacherid.tname,
+                    "tname": i.teacherid.name,
                     "intro": i.intro,
                     "date": i.date,
                     "name": i.name
@@ -129,4 +131,34 @@ class CheckNotice(View):
             "data": '1'
         }
         return JsonResponse(data)
+#发送消息
+class SendNoticeClass(View):
+    def post(self,request):
+        auth = request.POST.get('auth')
+        identity = request.POST.get("identity")
+        title = request.POST.get('title')
+        intro = request.POST.get('intro')
+        classid = request.POST.get('classid')
+        print(request.POST)
+        s = []
+        clastu = Classstu.objects.filter(classid=classid,status=1)
+        #获取课程学生
+        if len(clastu)!=0:
+            for cl in clastu:
+                s.append(cl.studentid)
+        #生成通知
+        info = Info.objects.create(name=title,intro=intro,classid=Class.objects.get(classid=classid),teacherid=Teacher.objects.get(teacherid=auth),status=1,date=datetime.datetime.now())
+        #把通知发送给学生
+        for stu in s:
+            Infostu.objects.create(infoid=info,studentid=stu,status=0)
+        data = {
+            "status": '1',
+            "result": "添加成功",
+            "data": '1'
+        }
+        return JsonResponse(data)
+
+
+
+
 

@@ -68,9 +68,10 @@ try:
         date = datetime.date.today()
         temp = res['temp']
         intro = res['WD'] + res['WS'] + " " + res['weather']
+        weather = res['weather']
         pm = res['aqi_pm25']
         t = time.time()
-        Weather.objects.create(date=date, intro=intro, temp=temp, pm=pm, time=t)
+        Weather.objects.filter(weatherid=220).update(date=date, intro=intro, temp=temp, pm=pm, time=t,weather=weather)
     #初始化（周数 日期 星期）
     def init():
         print("执行了初始化")
@@ -238,7 +239,6 @@ except Exception as e:
     # 有错误就停止定时器
     # weatherscheduler.shutdown()
 job()
-init()
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))
