@@ -8,7 +8,7 @@ class GetWeather(View):
     def get(self,request):
         w = Weather.objects.filter().order_by('-weatherid')[0]
         if w != None:
-            temp = {'temp':w.temp,'intro':w.intro,'pm':w.pm}
+            temp = {'temp':w.temp,'intro':w.intro,'pm':w.pm,'weather':w.weather}
             data = {
                 "status": "1",
                 "result": "获取天气成功",

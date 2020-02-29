@@ -100,8 +100,37 @@ class GetClassCheck(View):
             pass
         else:
             Checkhistory.objects.create(checkid=Check.objects.get(checkid=checkid),good=good,bad=bad)
+        print(studentlist)
         data = {
             "status": 1,
+            "result": "查询成功",
+            "data": studentlist,
+            "good": good,
+            "bad": bad
+        }
+        return JsonResponse(data)
+    def post(self,request):
+        checkid = request.POST.get('checkid')
+        # 获取参与的所有学生
+        checkstus = Checkstu.objects.filter(checkid=checkid).order_by('status')
+        studentlist = []
+        # 打卡学生个数
+        bad = 0
+        good = 0
+        for cs in checkstus:
+            studentid = str(cs.studentid.studentid)
+            s = Student.objects.raw(
+                'select s.*,c.status as checkstatus from student s join checkstu c on s.studentid = ' + studentid + ' and c.studentid=' + studentid+" order by c.status asc")
+            if s[0].checkstatus == 0:
+                bad += 1
+            else:
+                good += 1
+            studentlist.append({'sid': s[0].studentid, 'account': s[0].account, 'name': s[0].name,
+                                'headpic': Utils.HOST+Utils.PIC_URL+s[0].headpic,
+                                'grade': s[0].grade, 'email': s[0].email, 'major': s[0].majorid.majorid,
+                                'status': s[0].checkstatus})
+        data = {
+            "status": '1',
             "result": "查询成功",
             "data": studentlist,
             "good": good,

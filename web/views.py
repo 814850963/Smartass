@@ -129,7 +129,7 @@ try:
                 check = Check.objects.filter(classid=c,status=1).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                   Check.objects.filter(classid=c,status=1).order_by('-checkid')[0].update(status=0)
+                   Check.objects.filter(classid=c,status=1).order_by('-checkid').update(status=0)
                 else:
                     pass
     def am9():
@@ -148,7 +148,7 @@ try:
                 check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
                 else:
                     pass
     def pm13():
@@ -166,7 +166,7 @@ try:
                 check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
                 else:
                     pass
     def pm15():
@@ -184,7 +184,7 @@ try:
                 check = Check.objects.filter(classid=c, status=1).order_by('-checkid')
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                    Check.objects.filter(classid=c, status=1).order_by('-checkid')[0].update(status=0)
+                    Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
                 else:
                     pass
     def pm18():
@@ -202,7 +202,7 @@ try:
                 check = Check.objects.filter(classid=c,status=1).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
-                   Check.objects.filter(classid=c,status=1).order_by('-checkid')[0].update(status=0)
+                   Check.objects.filter(classid=c,status=1).order_by('-checkid').update(status=0)
                 else:
                     pass
     def closeclass():
@@ -238,7 +238,7 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     # weatherscheduler.shutdown()
-job()
+
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))

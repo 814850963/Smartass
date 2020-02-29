@@ -6,6 +6,9 @@ from django.views import View
 from android.models import *
 
 #获取所有通知
+from smartass import Utils
+
+
 class GetAllNotice(View):
     def post(self,request):
         auth = request.POST.get('auth')
@@ -107,16 +110,53 @@ class GetNoticeInfo(View):
                     "time": i.date,
                     "status": infostu.status
                 }
-        #老师（未处理）
-        else:
-            pass
-        print(data)
         data = {
             "status": '1',
             "result": "添加成功",
             "data": data
         }
         return JsonResponse(data)
+#获取老师的通知详情
+class GetTNoticeInfo(View):
+    def post(self,request):
+        infoid = request.POST.get('infoid')
+        i = Info.objects.get(infoid=infoid)
+        auth = request.POST.get('auth')
+        data = []
+        bad = 0
+        good = 0
+        studentlist = []
+        #学生
+        infostu = Infostu.objects.filter(infoid=i).order_by('status')
+        data = {
+            "infoid": i.infoid,
+            "title": i.name,
+            "tname": i.teacherid.name,
+            "intro": i.intro,
+            "time": i.date,
+            "status": i.status
+        }
+        print(infostu)
+        for i in infostu:
+            if i.status == 0:
+                bad += 1
+            else:
+                good += 1
+            studentlist.append({'sid': i.studentid.studentid, 'account': i.studentid.account, 'name': i.studentid.name,
+                                'headpic': Utils.HOST + Utils.PIC_URL + i.studentid.headpic,
+                                'grade': i.studentid.grade, 'email': i.studentid.email, 'major': i.studentid.majorid.majorid,
+                                'status': i.status})
+        data = {
+            "status": '1',
+            "result": "添加成功",
+            "data": data,
+            "stu":studentlist,
+            "good": good,
+            "bad": bad
+        }
+        print(data)
+        return JsonResponse(data)
+
 #阅读
 class CheckNotice(View):
     def post(self,request):

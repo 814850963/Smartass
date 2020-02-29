@@ -17,7 +17,6 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include
 
-from android import views as av
 from android.view.HandleClass import *
 from android.view.HandleFace import *
 from android.view.HandleFriend import *
@@ -43,13 +42,8 @@ from django.conf import settings ##新增
 from django.conf.urls import url ##新增
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url('test/',av.test_view),
-    url('ppp',av.ppp),
-    #^以。。。开头$以。。。结尾
-    url(r'^articles/2003/$',av.article),
-    url(r'^articles/(?P<year>[0-9]{4})/$',av.article_archive),
-    url("android/",include("android.urls")),
+    # url(r'^admin/', admin.site.urls),
+    # url("android/",include("android.urls")),
     #android端
     url(r'^android/login/$',Login.as_view()),
     url(r'^android/getPersonProfile/$',GetPersonProfile.as_view()),
@@ -71,7 +65,10 @@ urlpatterns = [
     url(r'^android/getClassComment/$',GetClassComment.as_view()),
     url(r'^android/sendClassComment/$',SendClassComment.as_view()),
     url(r'^android/getInstantClass/$',GetInstantClass.as_view()),
+    url(r'^android/GetTInstantClass/$',GetTInstantClass.as_view()),
     url(r'^android/getTeacherCheck/$',GetTeacherCheck.as_view()),
+    url(r'^android/getCheckHistory/$',GetCheckHistory.as_view()),
+    url(r'^android/GetClassCheck/', GetClassCheck.as_view()),
     #朋友圈管理
     url(r'^android/getfriendshare/$',GetFriendShare.as_view()),
     url(r'^android/getmyshare/$',GetMyShare.as_view()),
@@ -89,6 +86,7 @@ urlpatterns = [
     url(r'^android/getclassnotice/$',GetClassNotice.as_view()),
     url(r'^android/getallnotice/$',GetAllNotice.as_view()),
     url(r'^android/getnoticeinfo/$',GetNoticeInfo.as_view()),
+    url(r'^android/gettnoticeinfo/$',GetTNoticeInfo.as_view()),
     url(r'^android/checknotice/$',CheckNotice.as_view()),
     url(r'^android/sendnoticeclass/$',SendNoticeClass.as_view()),
     #修改个人信息
