@@ -17,14 +17,19 @@ class CourseList(View):
     def get(self,request):
         page = request.GET.get('page')
         major = request.GET.get('major')
+        search = request.GET.get('search')
+        print(major)
         #条件搜索
         if major != None and page !=None:
-            courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major)
+            if search != None:
+                courses = Course.objects.filter(name__icontains=search,majorid=Major.objects.get(majorid=major))
+            else:
+                courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major)
             length = len(courses)
             temp = []
             for c in courses:
                 temp.append(
-                    {'courseid': c.courseid, 'name': c.name,  'mname': c.mname,'info': c.intro, 'major': c.majorid.majorid, 'status': c.status})
+                    {'courseid': c.courseid, 'name': c.name,  'mname': c.majorid.mname,'info': c.intro, 'major': c.majorid.majorid, 'status': c.status})
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -35,12 +40,15 @@ class CourseList(View):
             return JsonResponse(data)
         #带专业查询
         elif page == None and major != None:
-            courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major)
+            if search != None:
+                courses = Course.objects.filter(name__icontains=search, majorid=Major.objects.get(majorid=major))
+            else:
+                courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major)
             length = len(courses)
             temp = []
             for c in courses:
                 temp.append(
-                    {'courseid': c.courseid, 'name': c.name, 'mname': c.mname, 'info': c.intro,
+                    {'courseid': c.courseid, 'name': c.name, 'mname': c.majorid.mname, 'info': c.intro,
                      'major': c.majorid.majorid, 'status': c.status})
             data = {
                 "status": 1,
@@ -51,12 +59,15 @@ class CourseList(View):
             }
             return JsonResponse(data)
        #普通搜索
-        courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on c.majorid= m.majorid')
+        if search != None:
+            courses = Course.objects.filter(name__icontains=search)
+        else:
+            courses = Course.objects.raw('select c.*,m.mname from major m inner join course c  on c.majorid= m.majorid')
         length = len(courses)
         temp = []
         for c in courses:
             temp.append(
-                {'courseid': c.courseid, 'name': c.name, 'mname': c.mname, 'info': c.intro,
+                {'courseid': c.courseid, 'name': c.name, 'mname': c.majorid.mname, 'info': c.intro,
                  'major': c.majorid.majorid, 'status': c.status})
         data = {
             "status": 1,
@@ -115,6 +126,11 @@ class ChangeCStatus(View):
         courseid = request.POST.get('courseid')
         status = request.POST.get('status')
         if Course.objects.filter(courseid=courseid).update(status = status):
+            #注意这一步操作！ 班级全部不可用
+            if status != '1':
+                Class.objects.filter(courseid=Course.objects.get(courseid=courseid)).update(status=0)
+            else:
+                Class.objects.filter(courseid=Course.objects.get(courseid=courseid)).update(status=1)
             data = {
                 "status": 1,
                 "result": "修改成功",

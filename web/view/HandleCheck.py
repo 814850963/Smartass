@@ -47,7 +47,7 @@ class CheckList(View):
 class StartCheck(View):
     def post(self,request):
         classid = request.POST.get('classid')
-        teacherid = request.POST.get('teacherid')
+        teacherid = request.POST.get('auth')
         if teacherid==None:
             teacherid = 6
         now = datetime.datetime.now()
@@ -155,7 +155,7 @@ class GetDayCheck(View):
         #获取今天的数据
         u=Util.objects.get(utilid=22)
         #获取当天的课程
-        classes = Class.objects.all()
+        classes = Class.objects.filter(status=1)
         #把需要上课的课程存储到cn里
         cn = []
         checks = []
@@ -181,5 +181,37 @@ class GetDayCheck(View):
             "result": "查询成功",
             "good": good,
             "bad": bad
+        }
+        return JsonResponse(data)
+#教师开启考勤
+class CheckOn(View):
+    def post(self,request):
+        classid = request.POST.get('classid')
+        teacherid = request.POST.get('auth')
+        now = datetime.datetime.now()
+        #创建考勤记录
+        teacherid = Teacher.objects.filter(teacherid=teacherid, status=1)
+        classid = Class.objects.filter(classid=classid, status=1)
+        if not teacherid or not classid:
+            data = {
+                "status": 1,
+                "result": "课程异常",
+            }
+            return JsonResponse(data)
+        #先进行判断是否已经有考勤记录
+        if Check.objects.filter(teacherid=teacherid[0],classid=classid[0],status=1):
+            data = {
+                "status": 1,
+                "result": "开启失败(已经开启过了)",
+            }
+            return JsonResponse(data)
+        c = Check.objects.create(time=now, teacherid=teacherid[0], classid=classid[0], status=1)
+        #通知学生考勤
+        classtus = Classstu.objects.raw('select * from Classstu where classid='+str(classid[0].classid)+' and status=1')
+        for clastu in classtus:
+            Checkstu.objects.create(status=0,studentid=clastu.studentid,checkid=c)
+        data = {
+            "status": 1,
+            "result": "开启成功",
         }
         return JsonResponse(data)

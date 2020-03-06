@@ -4,6 +4,7 @@ import os
 from base64 import encode
 
 from django.core import serializers
+from django.db.models import Q
 from django.views import View
 
 from django.http import HttpResponse,JsonResponse
@@ -22,15 +23,18 @@ class StudentList(View):
         page = request.GET.get('page')
         grade = request.GET.get('grade')
         major = request.GET.get('major')
+        search = request.GET.get('search')
         #带专业和页数查询
         if grade != None and major != None and page !=None:
-            students = Student.objects.raw(
-                'select s.*,m.mname from major m inner join student s  on s.majorid=' + major + ' and s.majorid = m.majorid and s.grade=' + grade)
+            if search!=None:
+                students = Student.objects.filter(Q(name__icontains=search)|Q(account__icontains=search),majorid=Major.objects.get(majorid=major),grade=grade,).order_by('majorid').order_by('-grade')
+            else:
+                students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on s.majorid=' + major + ' and s.majorid = m.majorid and s.grade=' + grade+" order by majorid asc , grade desc")
             length = len(students)
             temp = []
             for s in students:
                 temp.append(
-                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.majorid.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
                      'major': s.majorid.majorid, 'status': s.status})
             data = {
                 "status": 1,
@@ -42,12 +46,15 @@ class StudentList(View):
             return JsonResponse(data)
         # 带专业查询
         elif page==None and grade!=None and major!=None:
-            students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on s.majorid='+major +' and s.majorid = m.majorid and s.grade='+grade)
+            if search!=None:
+                students = Student.objects.filter(Q(name__icontains=search)|Q(account__icontains=search),majorid=Major.objects.get(majorid=major),grade=grade).order_by('majorid').order_by('-grade')
+            else:
+                students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on s.majorid='+major +' and s.majorid = m.majorid and s.grade='+grade+" order by majorid asc , grade desc")
             temp = []
             length = len(students)
             for s in students:
                 temp.append(
-                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
+                    {'sid':s.studentid,'account': s.account, 'name': s.name,'mname':s.majorid.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic, 'grade': s.grade, 'email': s.email,
                      'major': s.majorid.majorid, 'status': s.status})
             data = {
                 "status": 1,
@@ -58,10 +65,15 @@ class StudentList(View):
             }
             return JsonResponse(data)
         #直接查询
-        students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid')
+        if search != None:
+            students = Student.objects.filter(Q(name__icontains=search)|Q(account__icontains=search)).order_by('majorid').order_by('-grade')
+        else:
+            students = Student.objects.raw('select s.*,m.mname from major m inner join student s  on m.majorid=s.majorid'+" order by majorid asc , grade desc")
         temp = []
+        print(type(students))
+        print(len(students))
         for s in students:
-            temp.append({'sid':s.studentid,'account':s.account,'mname':s.mname,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.majorid.majorid,'status':s.status})
+            temp.append({'sid':s.studentid,'account':s.account,'mname':s.majorid.mname,'name':s.name,'headpic': "http://"+request.get_host()+Utils.PIC_URL+s.headpic,'grade':s.grade,'email':s.email,'major':s.majorid.majorid,'status':s.status})
         length = len(students)
         data = {
             "status": 1,
@@ -71,7 +83,6 @@ class StudentList(View):
             "len": length
         }
         return JsonResponse(data)
-
 #获取专业信息
 class GetAllMajor(View):
     def get(self, request):
@@ -121,6 +132,13 @@ class AddStudent(View):
         major = request.POST.get('major')
         grade = request.POST.get('grade')
         email = request.POST.get('email')
+        #如果账号一样则报错
+        if len(Student.objects.filter(account=account))>0:
+            data = {
+                "status": 0,
+                "result": "账号相同",
+            }
+            return JsonResponse(data)
         #处理图片
         if not file:  # 文件对象不存在， 返回400请求错误
             data = {
@@ -165,7 +183,14 @@ class ChangeStudent(View):
         grade = request.POST.get('grade')
         email = request.POST.get('email')
         sid = request.POST.get('sid')
-        # 处理图片
+        # 如果账号一样则报错
+        if len(Student.objects.filter(account=account)) > 0:
+            data = {
+                "status": 0,
+                "result": "账号相同",
+            }
+            return JsonResponse(data)
+            # 处理图片
         if not file:  # 文件对象不存在， 返回400请求错误
             data = {
                 "status": 0,
@@ -224,9 +249,14 @@ class GetClassStudent(View):
     def get(self,request):
         page = request.GET.get('page')
         classid = request.GET.get('classid')
+        search = request.GET.get('search')
         if page!=None:
             #通过classid查询学生
-            classtus = Classstu.objects.filter(classid=classid,status=1)
+            if search != None:
+                classtus = Classstu.objects.filter(studentid__name__icontains=search, classid=classid,status=1)
+            else:
+                classtus = Classstu.objects.filter(classid=classid,status=1)
+            print(classtus)
             students = []
             for s in classtus:
                 students.append(s.studentid)
@@ -248,7 +278,10 @@ class GetClassStudent(View):
             return JsonResponse(data)
         else:
             # 通过classid查询学生
-            classtus = Classstu.objects.filter(classid=classid)
+            if search != None:
+                classtus = Classstu.objects.filter(studentid__name__icontains=search, classid=classid,status=1)
+            else:
+                classtus = Classstu.objects.filter(classid=classid,status=1)
             students = []
             for s in classtus:
                 print(s)

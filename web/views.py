@@ -238,7 +238,6 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     # weatherscheduler.shutdown()
-
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))

@@ -1,6 +1,7 @@
 import hashlib
 import os
 
+from django.db.models import Q
 from django.http import JsonResponse,HttpResponse
 from django.views import View
 
@@ -13,14 +14,18 @@ class TeacherList(View):
     def get(self,request):
         page = request.GET.get('page')
         major = request.GET.get('major')
+        search = request.GET.get('search')
         #带专业和页数查询
         if major != None and page !=None:
-            teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on t.majorid=' + major + ' and t.majorid = m.majorid')
+            if search != None:
+                teachers = Teacher.objects.filter(Q(name__icontains=search)|Q(account__icontains=search),majorid=major).order_by('majorid')
+            else:
+                teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on t.majorid=' + major + ' and t.majorid = m.majorid'+" order by majorid asc")
             length = len(teachers)
             temp = []
             for t in teachers:
                 temp.append(
-                    {'tid':t.teacherid,'account': t.account, 'name': t.name,'mname':t.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+t.pic,  'email': t.email,'major': t.majorid.majorid, 'status': t.status})
+                    {'tid':t.teacherid,'account': t.account, 'name': t.name,'mname':t.majorid.mname, 'headpic': "http://"+request.get_host()+Utils.PIC_URL+t.pic,  'email': t.email,'major': t.majorid.majorid, 'status': t.status})
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -31,12 +36,15 @@ class TeacherList(View):
             return JsonResponse(data)
         # 带专业查询
         elif page==None and  major!=None:
-            teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on t.majorid=' + major + ' and t.majorid = m.majorid')
+            if search != None:
+                teachers = Teacher.objects.filter(Q(name__icontains=search)|Q(account__icontains=search),majorid=major).order_by('majorid')
+            else:
+                teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on t.majorid=' + major + ' and t.majorid = m.majorid'+" order by majorid asc")
             length = len(teachers)
             temp = []
             for t in teachers:
                 temp.append(
-                    {'tid': t.teacherid, 'account': t.account, 'name': t.name, 'mname': t.mname,'headpic': "http://" + request.get_host() + Utils.PIC_URL + t.pic, 'email': t.email,'major': t.majorid.majorid, 'status': t.status})
+                    {'tid': t.teacherid, 'account': t.account, 'name': t.name, 'mname': t.majorid.mname,'headpic': "http://" + request.get_host() + Utils.PIC_URL + t.pic, 'email': t.email,'major': t.majorid.majorid, 'status': t.status})
             data = {
                 "status": 1,
                 "result": "查询成功",
@@ -46,11 +54,13 @@ class TeacherList(View):
             }
             return JsonResponse(data)
         #直接查询
-        teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on m.majorid=t.majorid')
-        print(teachers)
+        if search != None:
+            teachers = Teacher.objects.filter(Q(name__icontains=search)|Q(account__icontains=search)).order_by('majorid')
+        else:
+            teachers = Teacher.objects.raw('select t.*,m.mname from major m inner join teacher t  on m.majorid=t.majorid'+" order by majorid asc")
         temp = []
         for t in teachers:
-            temp.append({'tid': t.teacherid, 'account': t.account, 'name': t.name, 'mname': t.mname,'headpic': "http://" + request.get_host() + Utils.PIC_URL + t.pic, 'email': t.email,'major': t.majorid.majorid, 'status': t.status})
+            temp.append({'tid': t.teacherid, 'account': t.account, 'name': t.name, 'mname': t.majorid.mname,'headpic': "http://" + request.get_host() + Utils.PIC_URL + t.pic, 'email': t.email,'major': t.majorid.majorid, 'status': t.status})
         length = len(teachers)
         data = {
             "status": 1,
@@ -64,8 +74,6 @@ class TeacherList(View):
 #添加老师
 class AddTeacher(View):
     def post(self,request):
-        print(request.POST)
-        print(request.FILES)
         filename = request.POST.get('pic')
         file = request.FILES.get('file')
         name = request.POST.get('name')
@@ -73,6 +81,13 @@ class AddTeacher(View):
         account = request.POST.get('account')
         major = request.POST.get('major')
         email = request.POST.get('email')
+        #如果账号一样则报错
+        if len(Teacher.objects.filter(account=account))>0:
+            data = {
+                "status": 0,
+                "result": "账号相同",
+            }
+            return JsonResponse(data)
         # 处理图片
         if not file:  # 文件对象不存在， 返回400请求错误
             data = {
@@ -116,6 +131,13 @@ class ChangeTeacher(View):
         major = request.POST.get('major')
         email = request.POST.get('email')
         tid = request.POST.get('tid')
+        #如果账号一样则报错
+        if len(Teacher.objects.filter(account=account))>0:
+            data = {
+                "status": 0,
+                "result": "账号相同",
+            }
+            return JsonResponse(data)
         # 处理图片
         if not file:  # 文件对象不存在， 返回400请求错误
             data = {
@@ -140,7 +162,7 @@ class ChangeTeacher(View):
         #获取原来用户的图片
         teacher = Teacher.objects.get(teacherid=tid)
         f = teacher.pic
-        if f != 'null':
+        if f != '':
             os.remove(settings.STATIC_ROOT+f)
         # 插入数据
         Teacher.objects.filter(teacherid=tid).update(name=name, passwd=result, account=account, majorid=major, pic=filename,email=email)

@@ -204,12 +204,9 @@ class GetInstantClass(View):
                 if str(today.weekday) in weekday:
                     #获取现在的时间
                     now = datetime.datetime.now()
-                    print(type(cls.time))
-                    print(cls.time==9)
                     #早上8点之前 0-23范围
                     if now.hour<18:
                         if cls.time == 9:
-                            print(c)
                             c = cls
                     if now.hour<15:
                         if cls.time == 7:
@@ -223,8 +220,6 @@ class GetInstantClass(View):
                     if now.hour<8:
                         if cls.time == 1:
                             c=cls
-
-        print(c)
         if c !=None:
             if c.time == 1:
                 c.time = "8:00"
@@ -239,7 +234,6 @@ class GetInstantClass(View):
             c = {"classid":c.classid,"name":c.name,"place":c.place,"tname":c.teacherid.name,"time":c.time}
         else:
             c = {"classid": None, "name": '今天没有课程哦', "place": "无教室", "tname": "无教师","time":"今天好好休息吧"}
-        print(c)
         data = {
             "data" : c,
             "status": '1',
@@ -263,20 +257,17 @@ class GetTInstantClass(View):
                 if str(today.weekday) in weekday:
                     #获取现在的时间
                     now = datetime.datetime.now()
-                    print(type(cls.time))
-                    print(cls.time==9)
                     #早上8点之前 0-23范围
                     if now.hour<18:
                         if cls.time == 9:
-                            print(c)
                             c = cls
                     if now.hour<15:
                         if cls.time == 7:
                             c = cls
-                    if now.hour<13 and now.minute<=19:
+                    if now.hour<13:
                         if cls.time == 5:
                             c = cls
-                    if now.hour<=9 and now.minute<=39:
+                    if now.hour<=9:
                         if cls.time == 3:
                             c = cls
                     if now.hour<8:
@@ -296,17 +287,19 @@ class GetTInstantClass(View):
             c = {"classid":c.classid,"name":c.name,"place":c.place,"time":c.time}
         else:
             c = {"classid": "0", "name": '今天没有课程哦', "place": "无教室","time":"今天好好休息吧"}
-        print(c)
         data = {
             "data" : c,
             "status": '1',
             "result": "成功",
         }
+        print("获取到的课程")
+        print(data)
         return JsonResponse(data)
 #检测考勤状态
 class GetTeacherCheck(View):
     def post(self,request):
         identitiy = request.POST.get('identity')
+        print('获取到的classid'+request.POST.get('classid'))
         if request.POST.get("classid") == "null":
             data = {
                 "status": '0',
@@ -316,20 +309,24 @@ class GetTeacherCheck(View):
         classid = Class.objects.get(classid=request.POST.get("classid"))
         auth = request.POST.get("auth")
         #获取教师是否开启了考勤
+        print("结果")
         c = Check.objects.filter(classid=classid,status=1).order_by('-checkid')
         if len(c) == 0:
             data = {
                 "status": '0',
                 "result": "没有开启考勤",
             }
+            print(data)
             return JsonResponse(data)
         elif identitiy!=None:
             data = {
                 "status": '1',
                 "result": "没有开启考勤",
             }
+        #学生
         else:
-            checkstu = Checkstu.objects.get(studentid=Student.objects.get(studentid=auth),checkid=c)
+            s = Student.objects.get(studentid=auth)
+            checkstu = Checkstu.objects.get(studentid=s,checkid=c[0])
             if checkstu.status == 1:
                 data = {
                     "status": '1',
@@ -340,6 +337,7 @@ class GetTeacherCheck(View):
                     "status": '2',
                     "result": "请考勤",
                 }
+        print(data)
         return JsonResponse(data)
 #获取老师的考勤记录
 class GetCheckHistory(View):
@@ -365,5 +363,6 @@ class GetCheckHistory(View):
             "data":check
         }
         return JsonResponse(data)
+
 
 

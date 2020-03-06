@@ -69,6 +69,7 @@ urlpatterns = [
     url(r'^android/getTeacherCheck/$',GetTeacherCheck.as_view()),
     url(r'^android/getCheckHistory/$',GetCheckHistory.as_view()),
     url(r'^android/GetClassCheck/', GetClassCheck.as_view()),
+    url(r'^android/startCheck/', CheckOn.as_view()),
     #朋友圈管理
     url(r'^android/getfriendshare/$',GetFriendShare.as_view()),
     url(r'^android/getmyshare/$',GetMyShare.as_view()),

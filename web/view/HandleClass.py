@@ -18,6 +18,9 @@ class ClassList(View):
         page = request.GET.get('page')
         major = request.GET.get('major')
         course = request.GET.get('course')
+        search = request.GET.get('search')
+        if search == 'null':
+            search = None
         #条件搜索
         if major != None and page !=None and course!=None and course !='0' :
             classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major+' inner join class cc on cc.courseid = '+course+' and c.courseid = '+course)
@@ -26,8 +29,8 @@ class ClassList(View):
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
                      'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw('select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= '+str(c.classid))
                 c = c[0]
@@ -43,17 +46,18 @@ class ClassList(View):
             return JsonResponse(data)
         # 条件搜索
         elif major == None and int(page) >1 and course == None:
-            classes = Class.objects.raw(
-                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid = c.majorid inner join class cc on cc.courseid = c.courseid ' )
+            if search != None:
+                classes = Class.objects.filter(name__icontains=search)
+            else:
+                classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid = c.majorid inner join class cc on cc.courseid = c.courseid ' )
             length = len(classes)
             temp = []
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid, 'weekday': c.weekday,
-                     'total': c.total})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -71,16 +75,15 @@ class ClassList(View):
             return JsonResponse(data)
         #带专业和课程查询
         elif page == None and major != None and course!=None and course !='0':
-            classes = Class.objects.raw(
-                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = ' + course + ' and c.courseid = ' + course)
+            classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = ' + course + ' and c.courseid = ' + course)
             length = len(classes)
             temp = []
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -97,16 +100,18 @@ class ClassList(View):
             return JsonResponse(data)
         #专业搜索
         elif page==None and course=='0' and major!=None:
-            classes = Class.objects.raw(
-                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
+            if search != None:
+                classes = Class.objects.filter(name__icontains=search, majorid=Major.objects.get(majorid=major))
+            else:
+                classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
             length = len(classes)
             temp = []
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -123,16 +128,18 @@ class ClassList(View):
             return JsonResponse(data)
         # 专业搜索
         elif page != None and course == '0' and major != None:
-            classes = Class.objects.raw(
-                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
+            if search != None:
+                classes = Class.objects.filter(name__icontains=search, majorid=Major.objects.get(majorid=major))
+            else:
+                classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid=' + major + ' and c.majorid = ' + major + ' inner join class cc on cc.courseid = c.courseid ')
             length = len(classes)
             temp = []
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -149,16 +156,18 @@ class ClassList(View):
             return JsonResponse(data)
         # 普通搜索
         else:
-            classes = Class.objects.raw(
-                'select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid= c.majorid inner join class cc on cc.courseid = c.courseid')
+            if search != None:
+                classes = Class.objects.filter(name__icontains=search)
+            else:
+                classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid= c.majorid inner join class cc on cc.courseid = c.courseid')
             length = len(classes)
             temp = []
             count = 0
             for c in classes:
                 temp.append(
-                    {'classid': c.classid, 'name': c.name, 'mname': c.mname, 'coursename': c.cname, 'info': c.intro,
-                     'major': c.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
-                     'time': c.time, 'count': c.count, 'teacherid': c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
+                    {'classid': c.classid, 'name': c.name, 'mname': c.courseid.majorid.mname, 'coursename': c.courseid.name, 'info': c.intro,
+                     'major': c.courseid.majorid.majorid, 'status': c.status, 'course': c.courseid.courseid, 'place': c.place,
+                     'time': c.time, 'count': c.count,'teacherid':c.teacherid.teacherid,'weekday':c.weekday,'total':c.total})
                 c = Class.objects.raw(
                     'select c.*,t.name as tname from class c inner join teacher t on c.teacherid = t.teacherid and c.classid= ' + str(
                         c.classid))
@@ -177,6 +186,7 @@ class ClassList(View):
 #添加班级
 class AddClass(View):
     def post(self,request):
+        print(request.POST)
         name = request.POST.get('name')
         info = request.POST.get('info')
         place = request.POST.get('place')
@@ -188,6 +198,7 @@ class AddClass(View):
         course = Course.objects.get(courseid=course)
         total = request.POST.get('total')
         weekday = request.POST.get('weekday')
+
         # 插入数据
         if Class.objects.create(name=name, courseid=course,status=1,intro=info,place=place,time=time,count=count,teacherid=t,weekday=weekday,total=total):
             data = {
