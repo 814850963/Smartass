@@ -40,6 +40,10 @@ class GetMCC(View):
                 'children': coursesarray
             })
             coursesarray = []
+        instdata = {
+            'value': 0,
+            'label': '所有专业', }
+        majorsarray.append(instdata)
         data.append(majorsarray)
         return JsonResponse(data[0],safe=False)
 class SendMessage(View):
@@ -72,9 +76,7 @@ class SendMessage(View):
             replaceindex = content[:index].find('src="')
             url = "http://" + request.get_host() + Utils.INFO_URL + filename
             content = content.replace(content[replaceindex+5:end],url,1)
-            print(content)
             index = content.find(';base64,')
-            print(index)
         info = Info.objects.create(classid=c,intro=content,name=theme,status=1,teacherid=t,date=now)
         if info:
             students = Classstu.objects.filter(classid=c)
@@ -97,17 +99,21 @@ class SendMessage(View):
             return JsonResponse(data)
 class GetMessage(View):
     def get(self,request):
-        print(request.GET)
         page = request.GET.get('page')
+        search = request.GET.get('search')
         classid = request.GET.get('classid')
+        print(request.GET)
         if page==0:
             page=1
         if page==None:
-            messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
+            if search !=None:
+                messages = Info.objects.filter(name__icontains=search).order_by('infoid')
+            else:
+                messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
             temp = []
             for m in messages:
                 temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
-                             'classid': m.classid.classid,'teachername': m.tname, 'classname': m.cname, 'status': m.status})
+                             'classid': m.classid.classid,'teachername': m.teacherid.name, 'classname': m.classid.name, 'status': m.status})
             length = len(messages)
             data = {
                 "status": 1,
@@ -118,12 +124,15 @@ class GetMessage(View):
             }
             return JsonResponse(data)
         elif page==None and classid!=None:
-            messages = Info.objects.raw(
+            if search !=None:
+                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('infoid')
+            else:
+                messages = Info.objects.raw(
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
             temp = []
             for m in messages:
                 temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
-                             'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
+                             'classid': m.classid.classid, 'teachername': m.teacherid.name, 'classname': m.classid.name,
                              'status': m.status})
             length = len(messages)
             data = {
@@ -135,11 +144,14 @@ class GetMessage(View):
             }
             return JsonResponse(data)
         elif page != None and classid == None:
-            messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
+            if search !=None:
+                messages = Info.objects.filter(name__icontains=search).order_by('infoid')
+            else:
+                messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
             temp = []
             for m in messages:
                 temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
-                             'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
+                             'classid': m.classid.classid, 'teachername': m.teacherid.name, 'classname': m.classid.name,
                              'status': m.status})
             length = len(messages)
             data = {
@@ -151,12 +163,15 @@ class GetMessage(View):
             }
             return JsonResponse(data)
         elif page != None and classid != None:
-            messages = Info.objects.raw(
+            if search !=None:
+                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('infoid')
+            else:
+                messages = Info.objects.raw(
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
             temp = []
             for m in messages:
                 temp.append({'infoid': m.infoid, 'intro': m.intro, 'name': m.name, 'teacherid': m.teacherid.teacherid,'time':m.date,
-                             'classid': m.classid.classid, 'teachername': m.tname, 'classname': m.cname,
+                             'classid': m.classid.classid, 'teachername': m.teacherid.name, 'classname': m.classid.name,
                              'status': m.status})
             length = len(messages)
             data = {
@@ -167,3 +182,14 @@ class GetMessage(View):
                 "len": length
             }
             return JsonResponse(data)
+#修改通知状态
+class ChangeMessageStatus(View):
+    def post(self,request):
+        status = request.POST.get('status')
+        infoid = request.POST.get('infoid')
+        Info.objects.filter(infoid=infoid).update(status=status)
+        data = {
+            "status": 1,
+            "result": "修改成功",
+        }
+        return JsonResponse(data)

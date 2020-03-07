@@ -9,9 +9,13 @@ from web.models import *
 class GetMajorList(View):
     def get(self,request):
         page = request.GET.get('page')
+        search = request.GET.get('search')
         # 条件搜索
         if  page != None:
-            majors = Major.objects.all()
+            if search !=None:
+                majors = Major.objects.filter(mname__icontains=search)
+            else:
+                majors = Major.objects.all()
             length = len(majors)
             temp = []
             for m in majors:
@@ -26,7 +30,10 @@ class GetMajorList(View):
             }
             return JsonResponse(data)
         # 普通搜索
-        majors = Major.objects.all()
+        if search !=None:
+            majors = Major.objects.filter(mname__icontains=search)
+        else:
+            majors = Major.objects.all()
         length = len(majors)
         temp = []
         for m in majors:

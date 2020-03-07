@@ -1,5 +1,6 @@
 import base64
 import datetime
+import os
 
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
@@ -39,8 +40,14 @@ class AddNew(View):
         firsturl = None
         # 获取第一个图片
         index = content.find(';base64,')
-        end = 0
+        if index<0:
+            data = {
+                "status": 0,
+                "result": "新闻创建失败",
+            }
+            return JsonResponse(data)
         while index > 0:
+            end = 0
             # 获取图片后缀
             sign = content[end:index].split('/')[-1]
             # 获取图片最后位置
@@ -54,7 +61,7 @@ class AddNew(View):
             with open(settings.NEW_PIC + filename, 'wb+') as f:
                 f.write(data.read())
             # 把数据替换
-            replaceindex = content[:index].find('src="')
+            replaceindex = content[:index].rfind('src="')
             url = "http://" + request.get_host() + Utils.NEW_URL + filename
             if i == 0:
                 firsturl =  filename
@@ -86,10 +93,22 @@ class ChangeNew(View):
         now = now.strftime('%Y-%m-%d %H:%M:%S')
         # 获取第一个图片
         index = content.find(';base64,')
-        end = 0
+        new = New.objects.filter(newid=nid)[0]
+        firsturl = new.pic
+        if index>0:
+            # 删除旧图片
+            piclocal = new.intro.find('/new/')
+            while piclocal > 0:
+                endlocal = new.intro.find('"', piclocal)
+                print(new.intro[piclocal + 4:endlocal])
+                if os.path.exists(settings.NEW_PIC + new.intro[piclocal + 5:endlocal]):
+                    os.remove(settings.NEW_PIC + new.intro[piclocal + 5:endlocal])
+                print('删除了' + new.intro[piclocal+5:endlocal])
+                piclocal = new.intro.find('/new/', piclocal + 5)
         i=0
-        firsturl = None
         while index > 0:
+            firsturl = None
+            end = 0
             # 获取图片后缀
             sign = content[end:index].split('/')[-1]
             # 获取图片最后位置
@@ -103,12 +122,10 @@ class ChangeNew(View):
             with open(settings.NEW_PIC + filename, 'wb+') as f:
                 f.write(data.read())
             # 把数据替换
-            replaceindex = content[:index].find('src="')
+            replaceindex = content[:index].rfind('src="')
             url = "http://" + request.get_host() + Utils.NEW_URL + filename
             content = content.replace(content[replaceindex + 5:end], url, 1)
-            print(content)
             index = content.find(';base64,')
-            print(index)
             if i == 0:
                 firsturl =  filename
                 i += 1

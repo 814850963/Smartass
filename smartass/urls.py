@@ -134,6 +134,7 @@ urlpatterns = [
     url(r'^web/MCCList/$', GetMCC.as_view()),
     url(r'^web/infoManage/sendMessage/', SendMessage.as_view()),
     url(r'^web/infoManage/getMessage/', GetMessage.as_view()),
+    url(r'^web/infoManage/changeMessagestatus/', ChangeMessageStatus.as_view()),
     #考勤管理
     url(r'^web/checkList/$', CheckList.as_view()),
     url(r'^web/checkList/startCheck/', StartCheck.as_view()),
