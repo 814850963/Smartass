@@ -15,7 +15,7 @@ class GetFriendShare(View):
         while gap > 0:
             for i in range(gap, n):
                 for j in range(i, 0, -gap):
-                    if a[j].circleId < a[j - gap].circleId:
+                    if a[j].circleid < a[j - gap].circleid:
                         a[j], a[j - gap] = a[j - gap], a[j]
                     else:
                         break
@@ -24,6 +24,7 @@ class GetFriendShare(View):
     def post(self,request):
         auth = request.POST.get('auth')
         identity = request.POST.get('identity')
+        print(request.POST)
         #关注的人
         followerstudent = []
         followerteacher = []
@@ -35,7 +36,7 @@ class GetFriendShare(View):
             if f.bfidentify == 1:
                 followerstudent.append(Student.objects.get(studentid=f.bfid))
             #关注者是老师
-            elif f.bfidentify == 2:
+            elif f.bfidentify == 0:
                 followerteacher.append(Teacher.objects.get(teacherid=f.bfid))
         for s in followerstudent:
             #获取单个学生的所有朋友圈动态
@@ -45,7 +46,7 @@ class GetFriendShare(View):
                 shares.append(c)
         for t in followerteacher:
             # 获取单个教师的所有朋友圈动态
-            circles = Circle.objects.filter(Teacherid=s).order_by('-time')
+            circles = Circle.objects.filter(Teacherid=t).order_by('-time')
             # 把每个朋友圈都存进来
             for c in circles:
                 shares.append(c)
@@ -54,16 +55,12 @@ class GetFriendShare(View):
         data = []
         #封装数据
         for c in shares:
-            #学生
-            if identity=='1':
-                    pname = c.studentid.name
-            #老师
-            elif identity == '2':
-                pname = c.teacherid.name
             #获取头像
             if(c.studentid == None):
+                pname = c.teacherid.name
                 pic = Utils.HOST+Utils.PIC_URL+Teacher.objects.filter(teacherid=c.teacherid.teacherid)[0].pic
             elif(c.teacherid == None):
+                pname = c.studentid.name
                 pic = Utils.HOST + Utils.PIC_URL + Student.objects.filter(studentid=c.studentid.studentid)[0].headpic
             if identity == '1':
                 flag = Circlelike.objects.filter(circleid=c, studentid=Student.objects.get(studentid=auth))
@@ -81,7 +78,7 @@ class GetFriendShare(View):
                 'followid': c.circleid,
                 'title': c.name,
                 'intro': c.intro,
-                'time': c.time,
+                'time': c.time.strftime('%Y-%m-%d %H:%I:%S'),
                 'pic': pic,
                 'image':c.pic1,
                 'zan':c.zan,
@@ -143,7 +140,7 @@ class GetMyShare(View):
                 'followid': c.circleid,
                 'title': c.name,
                 'intro': c.intro,
-                'time': c.time,
+                'time': c.time.strftime('%Y-%m-%d %H:%I:%S'),
                 'pic': pic,
                 'image': image,
                 'zan': c.zan,
@@ -258,7 +255,7 @@ class GetFriendInfo(View):
                 c.pic2 = Utils.HOST+Utils.PENGYOU_URL+c.pic2
             if c.pic3 !=None:
                 c.pic3 = Utils.HOST+Utils.PENGYOU_URL+c.pic3
-            data = {"ppic":Utils.HOST+Utils.PIC_URL+s.headpic,"pname":s.name,"cname":c.name,"intro":c.intro,"time":c.time,"pic1":c.pic1,"pic2":c.pic2,"pic3":c.pic3}
+            data = {"ppic":Utils.HOST+Utils.PIC_URL+s.headpic,"pname":s.name,"cname":c.name,"intro":c.intro,"time":c.time.strftime('%Y-%m-%d %H:%I:%S'),"pic1":c.pic1,"pic2":c.pic2,"pic3":c.pic3}
         elif Circle.objects.get(circleid=circleid).teacherid != None:
             Circle.objects.filter(circleid=circleid).update(read=circle.read + 1)
             t = circle.teacherid
@@ -269,7 +266,7 @@ class GetFriendInfo(View):
                 c.pic2 = Utils.HOST+Utils.PENGYOU_URL+c.pic2
             if c.pic3 !=None:
                 c.pic3 = Utils.HOST+Utils.PENGYOU_URL+c.pic3
-            data = {"ppic":Utils.HOST+Utils.PIC_URL+t.pic,"pname":t.name,"cname":c.name,"intro":c.intro,"time":c.time,"pic1":c.pic1,"pic2":c.pic2,"pic3":c.pic3}
+            data = {"ppic":Utils.HOST+Utils.PIC_URL+t.pic,"pname":t.name,"cname":c.name,"intro":c.intro,"time":c.time.strftime('%Y-%m-%d %H:%I:%S'),"pic1":c.pic1,"pic2":c.pic2,"pic3":c.pic3}
         data = {
             "status": '1',
             "result": "添加成功",
@@ -357,7 +354,7 @@ class FriendCircleLike(View):
                     f = 1
                 else:
                     Circlelike.objects.filter(circleid=c, teacherid=auth).update(status=0)
-                    Circle.objects.filter(circommonid=c).update(zan=c.zan - 1)
+                    Circle.objects.filter(circleid=circleid).update(zan=c.zan - 1)
                     f = 0
             else:
                 Circlelike.objects.create(circleid=c, teacherid=auth, status=1)
@@ -425,9 +422,9 @@ class SendFriendComment(View):
         content = request.POST.get('content')
         identity = request.POST.get('identity')
         if identity == '1':
-            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),studentid=Student.objects.get(studentid=auth),status=1,zan=0,time=datetime.now(),intro=content)
+            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),studentid=Student.objects.get(studentid=auth),status=1,zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'),intro=content)
         else:
-            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),teacherid=Teacher.objects.get(teacherid=auth), status=1, zan=0,time=datetime.now(), intro=content)
+            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),teacherid=Teacher.objects.get(teacherid=auth), status=1, zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'), intro=content)
         data = {
             "status": '1',
             "result": "添加成功",

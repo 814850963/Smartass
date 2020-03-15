@@ -133,6 +133,7 @@ class GetClassCheck(View):
             "status": '1',
             "result": "查询成功",
             "data": studentlist,
+            "checkid":checkid,
             "good": good,
             "bad": bad
         }
@@ -144,9 +145,9 @@ class GetDayCheck(View):
         hour = 0
         if now.hour > 8:
             hour = 1
-        elif now.hour > 9 and now.second >40:
+        elif now.hour > 9:
             hour = 3
-        elif now.hour > 13 and now.second >20:
+        elif now.hour > 13:
             hour = 5
         elif now.hour > 15:
             hour = 7
@@ -158,7 +159,6 @@ class GetDayCheck(View):
         classes = Class.objects.filter(status=1)
         #把需要上课的课程存储到cn里
         cn = []
-        checks = []
         good = 0
         bad = 0
         #遍历进行筛选

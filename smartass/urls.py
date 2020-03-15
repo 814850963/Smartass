@@ -155,5 +155,11 @@ urlpatterns = [
     #图片过滤
     url(r'^static/pic/(?P<path>.*)$', static.serve,
         {'document_root': settings.STATIC_ROOT}, name='static'),
+    url(r'^static/info/(?P<path>.*)$', static.serve,
+        {'document_root': settings.INFO_PIC}, name='static'),
+    url(r'^static/new/(?P<path>.*)$', static.serve,
+        {'document_root': settings.NEW_PIC}, name='static'),
+    url(r'^static/pengyou/(?P<path>.*)$', static.serve,
+        {'document_root': settings.FRIEND_PIC}, name='static'),
 
 ]

@@ -15,6 +15,7 @@ from web.models import *
 #获取课程列表
 class CourseList(View):
     def get(self,request):
+        print(request.GET)
         page = request.GET.get('page')
         major = request.GET.get('major')
         search = request.GET.get('search')
@@ -55,6 +56,24 @@ class CourseList(View):
                 "result": "查询成功",
                 "data": temp[0:10],
                 "page": 1,
+                "len": length
+            }
+            return JsonResponse(data)
+        elif major == None and page !=None:
+            if search != None:
+                courses = Course.objects.filter(name__icontains=search)
+            else:
+                courses = Course.objects.all()
+            length = len(courses)
+            temp = []
+            for c in courses:
+                temp.append(
+                    {'courseid': c.courseid, 'name': c.name,  'mname': c.majorid.mname,'info': c.intro, 'major': c.majorid.majorid, 'status': c.status})
+            data = {
+                "status": 1,
+                "result": "查询成功",
+                "data": temp[abs(int(page) - 1) * 10:abs(int(page) - 1) * 10 + 10],
+                "page": abs(int(page)),
                 "len": length
             }
             return JsonResponse(data)

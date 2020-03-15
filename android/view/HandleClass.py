@@ -337,7 +337,6 @@ class GetTeacherCheck(View):
                     "status": '2',
                     "result": "请考勤",
                 }
-        print(data)
         return JsonResponse(data)
 #获取老师的考勤记录
 class GetCheckHistory(View):
@@ -351,7 +350,7 @@ class GetCheckHistory(View):
             for c in checks:
                 check.append({
                     'checkid':c.checkid,
-                    'time':c.time,
+                    'time':c.time.strftime('%Y-%m-%d %H:%I:%S'),
                     'name':c.classid.name,
                     'teacherid':c.teacherid.teacherid,
                     'classid':c.classid.classid,

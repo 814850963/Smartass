@@ -11,7 +11,7 @@ from django.db import models
 class Admin(models.Model):
     adminid = models.AutoField(db_column='adminId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=255)
-    passwd = models.CharField(max_length=255, blank=True, null=True)
+    passwd = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -21,7 +21,7 @@ class Admin(models.Model):
 class Category(models.Model):
     categoryid = models.AutoField(db_column='categoryId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=255)
-    status = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField()
 
     class Meta:
         managed = False
@@ -33,7 +33,7 @@ class Check(models.Model):
     time = models.DateTimeField(blank=True, null=True)
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId')  # Field name made lowercase.
     classid = models.ForeignKey('Class', models.DO_NOTHING, db_column='classId')  # Field name made lowercase.
-    status = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField()
 
     class Meta:
         managed = False
@@ -42,9 +42,9 @@ class Check(models.Model):
 
 class Checkhistory(models.Model):
     checkhistoryid = models.AutoField(primary_key=True)
-    good = models.IntegerField(blank=True, null=True)
-    bad = models.IntegerField(blank=True, null=True)
-    checkid = models.ForeignKey(Check, models.DO_NOTHING, db_column='checkid', blank=True, null=True)
+    good = models.IntegerField()
+    bad = models.IntegerField()
+    checkid = models.ForeignKey(Check, models.DO_NOTHING, db_column='checkid')
 
     class Meta:
         managed = False
@@ -54,7 +54,7 @@ class Checkhistory(models.Model):
 class Checkstu(models.Model):
     checkstuid = models.AutoField(db_column='checkstuId', primary_key=True)  # Field name made lowercase.
     time = models.DateTimeField(blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField()
     checkid = models.ForeignKey(Check, models.DO_NOTHING, db_column='checkId')  # Field name made lowercase.
     studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
 
@@ -68,7 +68,7 @@ class Circle(models.Model):
     name = models.CharField(max_length=255)
     intro = models.CharField(max_length=255)
     time = models.DateTimeField()
-    status = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField()
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid', blank=True, null=True)
     studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId', blank=True, null=True)  # Field name made lowercase.
     pic1 = models.CharField(max_length=255, blank=True, null=True)
@@ -90,7 +90,7 @@ class Circlecom(models.Model):
     status = models.IntegerField(blank=True, null=True)
     zan = models.IntegerField(blank=True, null=True)
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
+    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId', blank=True, null=True)  # Field name made lowercase.
     circleid = models.ForeignKey(Circle, models.DO_NOTHING, db_column='circleId')  # Field name made lowercase.
 
     class Meta:
@@ -113,7 +113,7 @@ class Circlelike(models.Model):
 class Circomlike(models.Model):
     circlecomlikeid = models.AutoField(db_column='circlecomlikeId', primary_key=True)  # Field name made lowercase.
     teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherId', blank=True, null=True)  # Field name made lowercase.
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId')  # Field name made lowercase.
+    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentId', blank=True, null=True)  # Field name made lowercase.
     circlecomid = models.ForeignKey(Circlecom, models.DO_NOTHING, db_column='circlecomId')  # Field name made lowercase.
     status = models.IntegerField(blank=True, null=True)
 

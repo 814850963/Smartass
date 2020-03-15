@@ -6,13 +6,6 @@ from django.views import View
 from android.models import *
 from smartass import Utils, settings
 
-import cv2
-import os
-import dlib
-from skimage import io
-import csv
-import numpy as np
-
 class Login(View):
     def post(self,request):
         account = request.POST.get('account')
@@ -118,8 +111,10 @@ class GetPersonProfile(View):
                 }
         elif identity == '0' and circleid!=None:
             c = Circle.objects.get(circleid=circleid)
-            #如果改任是学生
+            #如果该人是学生
             if c.studentid != None:
+                iden = '1'
+                id = c.studentid.studentid
                 f = Follow.objects.filter(fidentify=0,bfidentify=1,fid=auth,bfid=c.studentid.studentid)
                 if len(f)!=0:
                     flag = f[0].status
@@ -140,8 +135,11 @@ class GetPersonProfile(View):
                     'course': course,
                     'grade':grade
                 }
+                print(data)
             #改任是教师
             else:
+                iden = '0'
+                id = c.teacherid.teacherid
                 f = Follow.objects.filter(fidentify=0,bfidentify=0,fid=auth,bfid=c.teacherid.teacherid)
                 if len(f)!=0:
                     flag = f[0].status

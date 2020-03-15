@@ -10,7 +10,7 @@ class GetTop5News(View):
         news = New.objects.filter(status=1).order_by('-time')
         temp = []
         for n in news:
-            temp.append({'newid': n.newid, 'name': n.name, 'intro': n.intro, 'time': n.time,'status': n.status, 'categoryid': n.categoryid.categoryid,'pic':  Utils.HOST + Utils.NEW_URL  + n.pic})
+            temp.append({'newid': n.newid, 'name': n.name, 'intro': n.intro, 'time': n.time.strftime("%Y-%m-%d %H:%M:%S"),'status': n.status, 'categoryid': n.categoryid.categoryid,'pic':  Utils.HOST + Utils.NEW_URL  + n.pic})
         data = {
             "status": "1",
             "data":temp[0:5],
@@ -39,7 +39,7 @@ class GetNewsList(View):
         news = New.objects.filter(categoryid=category,status=1)
         data = []
         for n in news:
-            data.append({'newid': n.newid,'name':n.name,'time':n.time,'pic':Utils.HOST + Utils.NEW_URL  + n.pic,'cname':n.categoryid.name})
+            data.append({'newid': n.newid,'name':n.name,'time':n.time.strftime("%Y-%m-%d %H:%M:%S"),'pic':Utils.HOST + Utils.NEW_URL  + n.pic,'cname':n.categoryid.name})
         data = {
             "status": "1",
             "data": data,
@@ -51,7 +51,7 @@ class GetANew(View):
     def post(self,request):
         newid = request.POST.get('newid')
         n = New.objects.filter(newid=int(newid))[0]
-        data = ({'newid': n.newid,'name':n.name, 'intro': n.intro.replace("http://localhost:8000",Utils.HOST),'time':n.time,'pic':Utils.HOST + Utils.NEW_URL  + n.pic,'cname':n.categoryid.name})
+        data = ({'newid': n.newid,'name':n.name, 'intro': n.intro.replace("http://localhost:8000",Utils.HOST),'time':n.time.strftime("%Y-%m-%d %H:%M:%S"),'pic':Utils.HOST + Utils.NEW_URL  + n.pic,'cname':n.categoryid.name})
         data = {
             "status": "1",
             "data": data,

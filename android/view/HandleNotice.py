@@ -25,7 +25,7 @@ class GetAllNotice(View):
                         "cname": i.infoid.classid.name,
                         "tname": i.infoid.teacherid.name,
                         "intro": i.infoid.intro,
-                        "date": i.infoid.date,
+                        "date": i.infoid.date.strftime("%Y-%m-%d %H:%M:%S"),
                         "name":i.infoid.name
                     })
         # 教师
@@ -38,7 +38,7 @@ class GetAllNotice(View):
                     "cname": i.classid.name,
                     "tname": i.teacherid.name,
                     "intro": i.intro,
-                    "date": i.date,
+                    "date": i.date.strftime("%Y-%m-%d %H:%M:%S"),
                     "name": i.name
                 })
         data = {
@@ -68,7 +68,7 @@ class GetClassNotice(View):
                         "cname":c.name,
                         "tname":i.teacherid.name,
                         "intro":i.intro,
-                        "date":i.date,
+                        "date":i.date.strftime("%Y-%m-%d %H:%M:%S"),
                         "name":i.name
                     })
         #教师
@@ -81,7 +81,7 @@ class GetClassNotice(View):
                     "cname": c.name,
                     "tname": i.teacherid.tname,
                     "intro": i.intro,
-                    "date": i.date,
+                    "date": i.date.strftime("%Y-%m-%d %H:%M:%S"),
                     "name": i.name
                 })
         data = {
@@ -107,7 +107,7 @@ class GetNoticeInfo(View):
                     "title": i.name,
                     "tname": i.teacherid.name,
                     "intro": i.intro,
-                    "time": i.date,
+                    "time": i.date.strftime("%Y-%m-%d %H:%M:%S"),
                     "status": infostu.status
                 }
         data = {
@@ -133,7 +133,7 @@ class GetTNoticeInfo(View):
             "title": i.name,
             "tname": i.teacherid.name,
             "intro": i.intro,
-            "time": i.date,
+            "time": i.date.strftime("%Y-%m-%d %H:%M:%S"),
             "status": i.status
         }
         print(infostu)
