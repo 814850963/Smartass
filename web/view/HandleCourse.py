@@ -19,7 +19,8 @@ class CourseList(View):
         page = request.GET.get('page')
         major = request.GET.get('major')
         search = request.GET.get('search')
-        print(major)
+        if search == 'null':
+            search=None
         #条件搜索
         if major != None and page !=None:
             if search != None:

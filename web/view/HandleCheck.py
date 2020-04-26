@@ -119,16 +119,15 @@ class GetClassCheck(View):
         good = 0
         for cs in checkstus:
             studentid = str(cs.studentid.studentid)
-            s = Student.objects.raw(
-                'select s.*,c.status as checkstatus from student s join checkstu c on s.studentid = ' + studentid + ' and c.studentid=' + studentid+" order by c.status asc")
-            if s[0].checkstatus == 0:
+            s = Student.objects.filter(studentid=studentid)
+            if cs.status == 0:
                 bad += 1
             else:
                 good += 1
             studentlist.append({'sid': s[0].studentid, 'account': s[0].account, 'name': s[0].name,
                                 'headpic': Utils.HOST+Utils.PIC_URL+s[0].headpic,
                                 'grade': s[0].grade, 'email': s[0].email, 'major': s[0].majorid.majorid,
-                                'status': s[0].checkstatus})
+                                'status': cs.status})
         data = {
             "status": '1',
             "result": "查询成功",
@@ -194,14 +193,14 @@ class CheckOn(View):
         classid = Class.objects.filter(classid=classid, status=1)
         if not teacherid or not classid:
             data = {
-                "status": 1,
+                "status": '1',
                 "result": "课程异常",
             }
             return JsonResponse(data)
         #先进行判断是否已经有考勤记录
         if Check.objects.filter(teacherid=teacherid[0],classid=classid[0],status=1):
             data = {
-                "status": 1,
+                "status": '1',
                 "result": "开启失败(已经开启过了)",
             }
             return JsonResponse(data)
@@ -211,7 +210,7 @@ class CheckOn(View):
         for clastu in classtus:
             Checkstu.objects.create(status=0,studentid=clastu.studentid,checkid=c)
         data = {
-            "status": 1,
+            "status": '1',
             "result": "开启成功",
         }
         return JsonResponse(data)

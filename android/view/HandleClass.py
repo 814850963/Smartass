@@ -149,6 +149,21 @@ class GetClassInfo(View):
         }
         return JsonResponse(data)
 
+#判断是否是我的课程
+class IsMyClass(View):
+    def post(self,request):
+        classid = request.POST.get('classid')
+        auth = request.POST.get('auth')
+        ismyclass = Class.objects.get(classid=classid,teacherid=auth)
+        if ismyclass:
+            data = {
+                "status": '1',
+            }
+        else:
+            data = {
+                "status": '0',
+            }
+        return JsonResponse(data)
 #获取课程评论
 class GetClassComment(View):
     def post(self,request):
@@ -195,15 +210,18 @@ class GetInstantClass(View):
             if c.classid.status == 1:
                 stuclas.append(c.classid)
         c = None
-        for cls in stuclas:
+        for i in stuclas:
+            cls = i
             weekday = cls.weekday.split('/')
             total = cls.total.split('/')
             #周数匹配
-            if today.week <  int(total[1]) and today.week >= int(total[0]):
+            if today.week <= int(total[1]) and today.week >= int(total[0]):
                 #如果今天跟课程日期一样
                 if str(today.weekday) in weekday:
                     #获取现在的时间
                     now = datetime.datetime.now()
+                    # if c.time<cls.time:
+                    #     continue
                     #早上8点之前 0-23范围
                     if now.hour<18:
                         if cls.time == 9:
@@ -220,6 +238,7 @@ class GetInstantClass(View):
                     if now.hour<8:
                         if cls.time == 1:
                             c=cls
+
         if c !=None:
             if c.time == 1:
                 c.time = "8:00"
@@ -233,7 +252,7 @@ class GetInstantClass(View):
                 c.time = "18:00"
             c = {"classid":c.classid,"name":c.name,"place":c.place,"tname":c.teacherid.name,"time":c.time}
         else:
-            c = {"classid": None, "name": '今天没有课程哦', "place": "无教室", "tname": "无教师","time":"今天好好休息吧"}
+            c = {"classid": '0', "name": '今天没有课程哦', "place": "无教室", "tname": "无教师","time":"今天好好休息吧"}
         data = {
             "data" : c,
             "status": '1',
@@ -246,17 +265,19 @@ class GetTInstantClass(View):
         teacherid = request.POST.get('auth')
         t = Teacher.objects.get(teacherid=teacherid)
         today = Util.objects.get(utilid=22)
-        classes = Class.objects.filter(teacherid=t,status=1)
+        classes = Class.objects.filter(teacherid=t,status=1).order_by('-time')
         c = None
-        for cls in classes:
+        for i in classes:
+            cls = i
             weekday = cls.weekday.split('/')
             total = cls.total.split('/')
             #周数匹配
-            if today.week <  int(total[1]) and today.week >= int(total[0]):
+            if today.week <=  int(total[1]) and today.week >= int(total[0]):
                 #如果今天跟课程日期一样
                 if str(today.weekday) in weekday:
                     #获取现在的时间
                     now = datetime.datetime.now()
+                    print(cls.time)
                     #早上8点之前 0-23范围
                     if now.hour<18:
                         if cls.time == 9:
@@ -299,10 +320,9 @@ class GetTInstantClass(View):
 class GetTeacherCheck(View):
     def post(self,request):
         identitiy = request.POST.get('identity')
-        print('获取到的classid'+request.POST.get('classid'))
-        if request.POST.get("classid") == "null":
+        if request.POST.get("classid") == "null" or request.POST.get("classid") == "0":
             data = {
-                "status": '0',
+                "status": 0,
                 "result": "没有开启考勤",
             }
             return JsonResponse(data)
@@ -313,14 +333,14 @@ class GetTeacherCheck(View):
         c = Check.objects.filter(classid=classid,status=1).order_by('-checkid')
         if len(c) == 0:
             data = {
-                "status": '0',
+                "status": 0,
                 "result": "没有开启考勤",
             }
             print(data)
             return JsonResponse(data)
         elif identitiy!=None:
             data = {
-                "status": '1',
+                "status": 1,
                 "result": "没有开启考勤",
             }
         #学生
@@ -329,12 +349,12 @@ class GetTeacherCheck(View):
             checkstu = Checkstu.objects.get(studentid=s,checkid=c[0])
             if checkstu.status == 1:
                 data = {
-                    "status": '1',
+                    "status": 1,
                     "result": "已考勤",
                 }
             else:
                 data = {
-                    "status": '2',
+                    "status": 2,
                     "result": "请考勤",
                 }
         return JsonResponse(data)

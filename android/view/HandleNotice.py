@@ -79,11 +79,12 @@ class GetClassNotice(View):
                 data.append({
                     "infoid": i.infoid,
                     "cname": c.name,
-                    "tname": i.teacherid.tname,
+                    "tname": i.teacherid.name,
                     "intro": i.intro,
                     "date": i.date.strftime("%Y-%m-%d %H:%M:%S"),
                     "name": i.name
                 })
+        print(data)
         data = {
             "status": '1',
             "result": "添加成功",
@@ -175,7 +176,6 @@ class CheckNotice(View):
 class SendNoticeClass(View):
     def post(self,request):
         auth = request.POST.get('auth')
-        identity = request.POST.get("identity")
         title = request.POST.get('title')
         intro = request.POST.get('intro')
         classid = request.POST.get('classid')

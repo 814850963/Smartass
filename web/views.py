@@ -211,8 +211,6 @@ try:
         u = Util.objects.get(utilid=22)
         # 先获取当天8点上课的课程
         classes = Class.objects.all()
-        # 把需要上课的课程存储到cn里
-        cn = []
         # 遍历进行筛选
         for c in classes:
             # 把上课的节数给分割出来
@@ -238,8 +236,14 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     # weatherscheduler.shutdown()
-# init()
-# job()
+init()
+job()
+# closeclass()
+# am8()
+# am9()
+# pm13()
+# pm15()
+# pm18()
 def login(request):
     md5 = hashlib.md5()
     md5.update(request.POST.get('passwd').encode("utf-8"))

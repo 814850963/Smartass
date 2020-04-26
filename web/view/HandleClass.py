@@ -15,12 +15,17 @@ from web.models import *
 #获取课程列表
 class ClassList(View):
     def get(self,request):
+        print(request.GET)
         page = request.GET.get('page')
         major = request.GET.get('major')
         course = request.GET.get('course')
         search = request.GET.get('search')
         if search == 'null':
             search = None
+        if course == 'undefined'or course == 'null':
+            course = None
+        if major == 'undefined' or major == 'null':
+            major = None
         #条件搜索
         if major != None and page !=None and course!=None and course !='0' :
             classes = Class.objects.raw('select cc.*,c.name as cname,m.mname,c.majorid from major m inner join course c  on m.majorid='+major+' and c.majorid = '+major+' inner join class cc on cc.courseid = '+course+' and c.courseid = '+course)
@@ -63,7 +68,6 @@ class ClassList(View):
                         c.classid))
                 c = c[0]
                 temp[count]['tname'] = c.tname
-                print(temp[count])
                 count += 1
             data = {
                 "status": 1,
@@ -186,7 +190,6 @@ class ClassList(View):
 #添加班级
 class AddClass(View):
     def post(self,request):
-        print(request.POST)
         name = request.POST.get('name')
         info = request.POST.get('info')
         place = request.POST.get('place')
@@ -300,7 +303,6 @@ class AddStudentTClass(View):
         studentid = request.POST.get('studentid')
         classid = request.POST.get('classid')
         s = Classstu.objects.filter(studentid=Student.objects.get(studentid=studentid),classid=Class.objects.get(classid=classid))
-        print(len(s))
         if len(s)!=0 and s[0].status==0:
             Classstu.objects.filter(studentid=Student.objects.get(studentid=studentid),classid=Class.objects.get(classid=classid)).update(status=1)
             data = {

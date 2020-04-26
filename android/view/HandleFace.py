@@ -1,4 +1,5 @@
 import hashlib
+import time
 
 from django.http import JsonResponse
 from django.views import View
@@ -12,6 +13,7 @@ import dlib
 from skimage import io
 import csv
 import numpy as np
+import datetime
 
 # Dlib 正向人脸检测器
 detector = dlib.get_frontal_face_detector()
@@ -178,10 +180,6 @@ class FaceLogin(View):
                         # 如果 person_X 数据不为空
                         if str(features_known_arr[i][0]) != '0.0':
                             print("with person", str(i + 1), "the e distance: ", end='')
-                            # print(features_cap_arr[k])
-                            # print("=====================")
-                            # print(features_known_arr[i])
-                            # print("*************************")
                             e_distance_tmp = self.return_euclidean_distance(features_cap_arr[k], features_known_arr[i])
                             print("欧氏距离"+str(e_distance_tmp))
                             e_distance=e_distance_tmp
@@ -189,13 +187,13 @@ class FaceLogin(View):
                             # 空数据 person_X
                             e_distance=999999999
                     if e_distance < 0.4:
+                        print('identity='+identity)
+                        print(classid)
                         if identity == '1' and classid!=None:
-                            print(1231231212)
                             c = Check.objects.filter(classid=classid, status=1)[0]
-                            Checkstu.objects.filter(status=0,studentid=Student.objects.get(studentid=authon),checkid=c).update(status=1)
+                            Checkstu.objects.filter(status=0,studentid=Student.objects.get(studentid=authon),checkid=c).update(status=1, time=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
                         if passwd != None and account !=None:
-                            print(312321321312)
                             s = Student.objects.filter(account=account)
                             print(s)
                             print(len(s))

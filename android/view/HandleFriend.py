@@ -418,13 +418,16 @@ class FriendComLike(View):
 class SendFriendComment(View):
     def post(self,request):
         circleid = request.POST.get('circleid')
+        circle = Circle.objects.get(circleid=circleid)
         auth = request.POST.get('auth')
         content = request.POST.get('content')
         identity = request.POST.get('identity')
         if identity == '1':
-            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),studentid=Student.objects.get(studentid=auth),status=1,zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'),intro=content)
+            Circlecom.objects.create(circleid=circle,studentid=Student.objects.get(studentid=auth),status=1,zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'),intro=content)
+            Circle.objects.filter(circleid=circleid).update(com=circle.com+1)
         else:
-            Circlecom.objects.create(circleid=Circle.objects.get(circleid=circleid),teacherid=Teacher.objects.get(teacherid=auth), status=1, zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'), intro=content)
+            Circlecom.objects.create(circleid=circle,teacherid=Teacher.objects.get(teacherid=auth), status=1, zan=0,time=datetime.now().strftime('%Y-%m-%d %H:%I:%S'), intro=content)
+            Circle.objects.filter(circleid=circleid).update(com=circle.com + 1)
         data = {
             "status": '1',
             "result": "添加成功",

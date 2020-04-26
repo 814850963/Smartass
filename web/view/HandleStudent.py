@@ -184,43 +184,44 @@ class ChangeStudent(View):
         email = request.POST.get('email')
         sid = request.POST.get('sid')
         # 如果账号一样则报错
-        if len(Student.objects.filter(account=account)) > 0:
-            data = {
-                "status": 0,
-                "result": "账号相同",
-            }
-            return JsonResponse(data)
-            # 处理图片
-        if not file:  # 文件对象不存在， 返回400请求错误
-            data = {
-                "status": 0,
-                "result": "添加失败",
-            }
-            return JsonResponse(data)
-        if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
-            data = {
-                "status": 0,
-                "result": "文件格式有误",
-            }
-            return JsonResponse(data)
-        # 生成随机的名字
-        filename = Utils.makerandomuuid(filename.split('.')[-1])
+        s = Student.objects.get(studentid=sid)
+        if account != s.account:
+            if len(Student.objects.filter(account=account)) > 0:
+                data = {
+                    "status": 0,
+                    "result": "输入账号已经被使用",
+                }
+                return JsonResponse(data)
+                # 处理图片
+            if file:  # 文件对象不存在， 返回400请求错误
+                # 获取原来用户的图片
+                student = Student.objects.get(studentid=sid)
+                f = student.headpic
+                if f != '':
+                    os.remove(settings.STATIC_ROOT + f)
+                if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+                    data = {
+                        "status": 0,
+                        "result": "文件格式有误",
+                    }
+                    return JsonResponse(data)
+                # 生成随机的名字
+                filename = Utils.makerandomuuid(filename.split('.')[-1])
         # md5加密
         md5 = hashlib.md5()
         md5.update(password.encode("utf-8"))
         result = md5.hexdigest()
         # 生成major对象
         major = Major.objects.get(majorid=major)
-        #获取原来用户的图片
-        student = Student.objects.get(studentid=sid)
-        f = student.headpic
-        if f != 'null'and len(f)!=0:
-            os.remove(settings.STATIC_ROOT+f)
-        # 插入数据
-        Student.objects.filter(studentid=sid).update(name=name, passwd=result, account=account, majorid=major, grade=grade, headpic=filename,email=email)
-        # 保存文件
-        with open(settings.STATIC_ROOT + filename, 'wb+') as f:
-            f.write(file.read())
+        if file:
+            # 插入数据
+            Student.objects.filter(studentid=sid).update(name=name, passwd=result, account=account, majorid=major,grade=grade, headpic=filename, email=email)
+            # 保存文件
+            with open(settings.STATIC_ROOT + filename, 'wb+') as f:
+                f.write(file.read())
+        else:
+            # 插入数据
+            Student.objects.filter(studentid=sid).update(name=name, passwd=result, account=account, majorid=major,grade=grade, email=email)
         data = {
             "status": 1,
             "result": "添加成功",

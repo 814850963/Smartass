@@ -24,6 +24,7 @@ from android.view.HandleLogin import *
 from android.view.HandleNews import *
 from android.view.HandleNotice import *
 from android.view.HandleWeather import *
+from android.view.pachong import getdouban
 from web import views as we
 from web.view.HandleCategory import *
 from web.view.HandleCheck import *
@@ -62,6 +63,7 @@ urlpatterns = [
     url(r'^android/getPClass/$',GetPerClass.as_view()),
     url(r'^android/getAllClass/$',GetAllClass.as_view()),
     url(r'^android/getClassInfo/$',GetClassInfo.as_view()),
+    url(r'^android/isMyClass/$',IsMyClass.as_view()),
     url(r'^android/getClassComment/$',GetClassComment.as_view()),
     url(r'^android/sendClassComment/$',SendClassComment.as_view()),
     url(r'^android/getInstantClass/$',GetInstantClass.as_view()),
@@ -161,5 +163,5 @@ urlpatterns = [
         {'document_root': settings.NEW_PIC}, name='static'),
     url(r'^static/pengyou/(?P<path>.*)$', static.serve,
         {'document_root': settings.FRIEND_PIC}, name='static'),
-
+    url(r'^getfilm/', getdouban.as_view()),
 ]

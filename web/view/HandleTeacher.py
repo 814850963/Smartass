@@ -131,44 +131,46 @@ class ChangeTeacher(View):
         major = request.POST.get('major')
         email = request.POST.get('email')
         tid = request.POST.get('tid')
-        #如果账号一样则报错
-        if len(Teacher.objects.filter(account=account))>0:
-            data = {
-                "status": 0,
-                "result": "账号相同",
-            }
-            return JsonResponse(data)
+        #如果账号一样则报错t
+        s = Teacher.objects.get(teacherid=tid)
+        if account != s.account:
+            if len(Teacher.objects.filter(account=account)) > 0:
+                data = {
+                    "status": 0,
+                    "result": "输入账号已经被使用",
+                }
+                return JsonResponse(data)
         # 处理图片
-        if not file:  # 文件对象不存在， 返回400请求错误
-            data = {
-                "status": 0,
-                "result": "添加失败",
-            }
-            return JsonResponse(data)
-        if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
-            data = {
-                "status": 0,
-                "result": "文件格式有误",
-            }
-            return JsonResponse(data)
-        # 生成随机的名字
-        filename = Utils.makerandomuuid(filename.split('.')[-1])
+        if file:  # 文件对象不存在， 返回400请求错误
+            # 获取原来用户的图片
+            teacher = Teacher.objects.get(teacherid=tid)
+            f = teacher.pic
+            if f != '':
+                os.remove(settings.STATIC_ROOT + f)
+            if filename.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+                data = {
+                    "status": 0,
+                    "result": "文件格式有误",
+                }
+                return JsonResponse(data)
+            # 生成随机的名字
+            filename = Utils.makerandomuuid(filename.split('.')[-1])
         # md5加密
         md5 = hashlib.md5()
         md5.update(password.encode("utf-8"))
         result = md5.hexdigest()
         # 生成major对象
         major = Major.objects.get(majorid=major)
-        #获取原来用户的图片
-        teacher = Teacher.objects.get(teacherid=tid)
-        f = teacher.pic
-        if f != '':
-            os.remove(settings.STATIC_ROOT+f)
-        # 插入数据
-        Teacher.objects.filter(teacherid=tid).update(name=name, passwd=result, account=account, majorid=major, pic=filename,email=email)
-        # 保存文件
-        with open(settings.STATIC_ROOT + filename, 'wb+') as f:
-            f.write(file.read())
+
+        if file:
+            # 插入数据
+            Teacher.objects.filter(teacherid=tid).update(name=name, passwd=result, account=account, majorid=major,pic=filename, email=email)
+            # 保存文件
+            with open(settings.STATIC_ROOT + filename, 'wb+') as f:
+                f.write(file.read())
+        else:
+            # 插入数据
+            Teacher.objects.filter(teacherid=tid).update(name=name, passwd=result, account=account, majorid=major,email=email)
         data = {
             "status": 1,
             "result": "添加成功",

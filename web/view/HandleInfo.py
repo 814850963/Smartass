@@ -125,7 +125,7 @@ class GetMessage(View):
             return JsonResponse(data)
         elif page==None and classid!=None:
             if search !=None:
-                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('infoid')
+                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('-infoid')
             else:
                 messages = Info.objects.raw(
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
@@ -145,7 +145,7 @@ class GetMessage(View):
             return JsonResponse(data)
         elif page != None and classid == None:
             if search !=None:
-                messages = Info.objects.filter(name__icontains=search).order_by('infoid')
+                messages = Info.objects.filter(name__icontains=search).order_by('-infoid')
             else:
                 messages = Info.objects.raw('select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid=c.classid order by i.infoid desc')
             temp = []
@@ -164,7 +164,7 @@ class GetMessage(View):
             return JsonResponse(data)
         elif page != None and classid != None:
             if search !=None:
-                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('infoid')
+                messages = Info.objects.filter(classid=classid,name__icontains=search).order_by('-infoid')
             else:
                 messages = Info.objects.raw(
                 'select i.*,t.name as tname, c.name as cname from Info i inner join teacher t  on i.teacherid=t.teacherid inner join class c on i.classid='+classid +' and c.classid = '+ classid +' order by i.infoid desc')
