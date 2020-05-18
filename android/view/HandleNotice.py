@@ -113,7 +113,7 @@ class GetNoticeInfo(View):
                 }
         data = {
             "status": '1',
-            "result": "添加成功",
+            "result": "成功",
             "data": data
         }
         return JsonResponse(data)
@@ -168,7 +168,7 @@ class CheckNotice(View):
         Infostu.objects.filter(infoid=i,studentid=Student.objects.get(studentid=auth)).update(status=1)
         data = {
             "status": '1',
-            "result": "添加成功",
+            "result": "成功",
             "data": '1'
         }
         return JsonResponse(data)

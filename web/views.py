@@ -130,6 +130,9 @@ try:
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
                    Check.objects.filter(classid=c,status=1).order_by('-checkid').update(status=0)
+                   good = len(Checkstu.objects.filter(checkid=check[0], status=1))
+                   bad = len(Checkstu.objects.filter(checkid=check[0], status=0))
+                   Checkhistory.objects.create(checkid=check[0], good=good, bad=bad)
                 else:
                     pass
     def am9():
@@ -149,6 +152,9 @@ try:
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
                     Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
+                    good = len(Checkstu.objects.filter(checkid=check[0], status=1))
+                    bad = len(Checkstu.objects.filter(checkid=check[0], status=0))
+                    Checkhistory.objects.create(checkid=check[0], good=good, bad=bad)
                 else:
                     pass
     def pm13():
@@ -167,6 +173,9 @@ try:
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
                     Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
+                    good = len(Checkstu.objects.filter(checkid=check[0], status=1))
+                    bad = len(Checkstu.objects.filter(checkid=check[0], status=0))
+                    Checkhistory.objects.create(checkid=check[0], good=good, bad=bad)
                 else:
                     pass
     def pm15():
@@ -185,6 +194,9 @@ try:
                 # 如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
                     Check.objects.filter(classid=c, status=1).order_by('-checkid').update(status=0)
+                    good = len(Checkstu.objects.filter(checkid=check[0], status=1))
+                    bad = len(Checkstu.objects.filter(checkid=check[0], status=0))
+                    Checkhistory.objects.create(checkid=check[0], good=good, bad=bad)
                 else:
                     pass
     def pm18():
@@ -203,6 +215,9 @@ try:
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
                    Check.objects.filter(classid=c,status=1).order_by('-checkid').update(status=0)
+                   good = len(Checkstu.objects.filter(checkid=check[0], status=1))
+                   bad = len(Checkstu.objects.filter(checkid=check[0], status=0))
+                   Checkhistory.objects.create(checkid=check[0], good=good, bad=bad)
                 else:
                     pass
     def closeclass():
@@ -236,12 +251,12 @@ except Exception as e:
     print(e)
     # 有错误就停止定时器
     # weatherscheduler.shutdown()
-init()
-job()
+# init()
+# job()
 # closeclass()
 # am8()
 # am9()
-# pm13()
+pm13()
 # pm15()
 # pm18()
 def login(request):

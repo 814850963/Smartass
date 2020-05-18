@@ -229,16 +229,16 @@ class GetInstantClass(View):
                     if now.hour<15:
                         if cls.time == 7:
                             c = cls
-                    if now.hour<13 and now.minute<=19:
+                    if now.hour<13 or(now.hour==13 and now.minute<=20):
                         if cls.time == 5:
                             c = cls
-                    if now.hour<=9 and now.minute<=39:
+                    if now.hour<=9 or (now.hour==9 and now.minute<=40):
                         if cls.time == 3:
                             c = cls
                     if now.hour<8:
                         if cls.time == 1:
                             c=cls
-
+        print(c)
         if c !=None:
             if c.time == 1:
                 c.time = "8:00"
@@ -252,11 +252,11 @@ class GetInstantClass(View):
                 c.time = "18:00"
             c = {"classid":c.classid,"name":c.name,"place":c.place,"tname":c.teacherid.name,"time":c.time}
         else:
-            c = {"classid": '0', "name": '今天没有课程哦', "place": "无教室", "tname": "无教师","time":"今天好好休息吧"}
+            c = {"classid": '0', "name": '今天没有课程', "place": "", "tname": "","time":"好好休息吧"}
         data = {
             "data" : c,
             "status": '1',
-            "result": "添加成功",
+            "result": "成功",
         }
         return JsonResponse(data)
 #获取老师即将上课的课程
@@ -285,10 +285,10 @@ class GetTInstantClass(View):
                     if now.hour<15:
                         if cls.time == 7:
                             c = cls
-                    if now.hour<13:
+                    if now.hour<13 or(now.hour==13 and now.minute<=19):
                         if cls.time == 5:
                             c = cls
-                    if now.hour<=9:
+                    if now.hour<9 or (now.hour==9 and now.minute<=39):
                         if cls.time == 3:
                             c = cls
                     if now.hour<8:
@@ -307,7 +307,7 @@ class GetTInstantClass(View):
                 c.time = "18:00"
             c = {"classid":c.classid,"name":c.name,"place":c.place,"time":c.time}
         else:
-            c = {"classid": "0", "name": '今天没有课程哦', "place": "无教室","time":"今天好好休息吧"}
+            c = {"classid": "0", "name": '今天没有课程', "place": "","time":"好好休息吧"}
         data = {
             "data" : c,
             "status": '1',

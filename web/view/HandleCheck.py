@@ -142,17 +142,18 @@ class GetDayCheck(View):
     def get(self,request):
         now = datetime.datetime.now()
         hour = 0
-        if now.hour > 8:
+        if now.hour >= 8:
             hour = 1
-        elif now.hour > 9:
+        if now.hour >= 9:
             hour = 3
-        elif now.hour > 13:
+        if now.hour >= 13:
             hour = 5
-        elif now.hour > 15:
+        if now.hour >= 15:
             hour = 7
-        elif now.hour > 18:
+        if now.hour >= 18:
             hour = 9
         #获取今天的数据
+        print(hour)
         u=Util.objects.get(utilid=22)
         #获取当天的课程
         classes = Class.objects.filter(status=1)
@@ -167,9 +168,10 @@ class GetDayCheck(View):
             if  str(u.weekday) in c.weekday and u.week in range(int(s),int(e)+1) and c.time<=hour:
                 cn.append(c)
                 #拿到课程后去check表里查找老师提交了的打卡信息并进行统计
-                check = Check.objects.filter(classid=c,status=1).order_by('-checkid')
+                check = Check.objects.filter(classid=c,status=0).order_by('-checkid')
                 #如果教师没有申请打卡则不动如果申请则关闭打卡通道
                 if check:
+                   print(check[0].checkid)
                    check = check[0]
                    checkdemo = Checkhistory.objects.filter(checkid=check)
                    if checkdemo:
@@ -181,6 +183,7 @@ class GetDayCheck(View):
             "good": good,
             "bad": bad
         }
+        print(data)
         return JsonResponse(data)
 #教师开启考勤
 class CheckOn(View):

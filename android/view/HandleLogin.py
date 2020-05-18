@@ -265,7 +265,7 @@ class ChangeIntro(View):
         if identity == '1':
             Student.objects.filter(studentid=auth).update(intro=intro)
         else:
-            Teacher.intro.find(teacherid=auth).update(intro=intro)
+            Teacher.objects.filter(teacherid=auth).update(intro=intro)
         data = {
             "status": '1',
             "result": "成功",
